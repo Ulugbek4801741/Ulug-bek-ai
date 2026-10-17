@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ulug'bek AI - Admin Panel & App Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: #0f172a; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <!-- Header / Brending -->
+    <header class="glass rounded-2xl p-6 mb-6 text-center max-w-5xl mx-auto shadow-2xl">
+        <h1 class="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-400">
+            🤖 Ulug'bek AI Company
+        </h1>
+        <p class="text-slate-400 mt-2 text-sm md:text-base">Universal No-Code Engine & Multi-Platform Generator</p>
+    </header>
+
+    <main class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Sidebar / Admin Panel Controls -->
+        <section class="glass rounded-2xl p-6 md:col-span-1 space-y-6">
+            <h2 class="text-xl font-bold border-b border-slate-700 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-indigo-400"></i> Admin Panel
+            </h2>
+            
+            <div class="space-y-4">
+                <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700">
+                    <p class="text-xs text-slate-400">Kompaniya egasi</p>
+                    <p class="font-semibold text-emerald-400">Ulug'bek (Founder)</p>
+                </div>
+
+                <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700">
+                    <p class="text-xs text-slate-400 mb-1">Moliyaviy Model (70/30)</p>
+                    <div class="text-sm font-medium space-y-1">
+                        <div class="flex justify-between"><span>Tadbirkor ulushi:</span> <span class="text-emerald-400 font-bold">70%</span></div>
+                        <div class="flex justify-between"><span>Admin Panel ulushi:</span> <span class="text-indigo-400 font-bold">30%</span></div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700 space-y-2 text-sm">
+                    <p class="font-semibold text-slate-300">Tizim holati:</p>
+                    <div class="flex items-center justify-between text-xs text-slate-400">
+                        <span>Neural Shield RASP:</span>
+                        <span class="text-emerald-400 font-bold">FAOL</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-slate-400">
+                        <span>Auto-Scaling:</span>
+                        <span class="text-indigo-400 font-bold">TAYYOR</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Workspace / App Generator -->
+        <section class="glass rounded-2xl p-6 md:col-span-2 space-y-6">
+            <h2 class="text-xl font-bold border-b border-slate-700 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-wand-magic-sparkles text-emerald-400"></i> Ilova va O'yin Generator
+            </h2>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-300 mb-2">Ilovangiz yoki o'yiningiz g'oyasini kiriting:</label>
+                <textarea id="appPrompt" rows="4" class="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-4 text-slate-200 focus:outline-none focus:border-indigo-500 text-sm" placeholder="Masalan: Bolalar uchun ta'limiy 2D o'yin va ovozli AI yordamchi..."></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-sm">
+                <label class="flex items-center gap-2 bg-slate-800/40 p-3 rounded-lg border border-slate-700/50 cursor-pointer">
+                    <input type="checkbox" checked class="accent-indigo-500"> Android (APK)
+                </label>
+                <label class="flex items-center gap-2 bg-slate-800/40 p-3 rounded-lg border border-slate-700/50 cursor-pointer">
+                    <input type="checkbox" checked class="accent-indigo-500"> iOS (iPhone)
+                </label>
+                <label class="flex items-center gap-2 bg-slate-800/40 p-3 rounded-lg border border-slate-700/50 cursor-pointer">
+                    <input type="checkbox" checked class="accent-indigo-500"> Web Sayt
+                </label>
+                <label class="flex items-center gap-2 bg-slate-800/40 p-3 rounded-lg border border-slate-700/50 cursor-pointer">
+                    <input type="checkbox" checked class="accent-indigo-500"> Windows (.exe)
+                </label>
+            </div>
+
+            <button onclick="generateApp()" class="w-full bg-gradient-to-r from-indigo-500 to-emerald-500 hover:from-indigo-600 hover:to-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg transition duration-200">
+                🚀 Ulug'bek AI: Ilovani Yaratish
+            </button>
+
+            <!-- Output area -->
+            <div id="outputArea" class="hidden bg-slate-900/90 border border-slate-800 rounded-xl p-4 space-y-3">
+                <p id="statusText" class="text-sm font-semibold text-indigo-400">🔍 Internet va Play Market ma'lumotlari tahlil qilinmoqda...</p>
+                <div class="w-full bg-slate-800 rounded-full h-2">
+                    <div id="progressBar" class="bg-gradient-to-r from-indigo-500 to-emerald-400 h-2 rounded-full transition-all duration-500" style="width: 20%"></div>
+                </div>
+                <div id="downloadLinks" class="hidden pt-2 space-y-2 border-t border-slate-800">
+                    <p class="text-xs text-emerald-400 font-bold">✨ Ilova muvaffaqiyatli build qilindi!</p>
+                    <a href="#" class="block bg-slate-800 hover:bg-slate-700 p-2 rounded text-xs text-indigo-300">📲 Android APK Yuklab Olish (Release)</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        function generateApp() {
+            const prompt = document.getElementById('appPrompt').value;
+            if(!prompt.trim()) { alert('Iltimos, g\'oya kiriting!'); return; }
+            
+            const output = document.getElementById('outputArea');
+            const status = document.getElementById('statusText');
+            const progress = document.getElementById('progressBar');
+            const links = document.getElementById('downloadLinks');
+
+            output.classList.remove('hidden');
+            links.classList.add('hidden');
+
+            setTimeout(() => { status.innerText = "🧠 AI Agentlar va Neural Shield kodi yozilmoqda..."; progress.style.width = "50%"; }, 1000);
+            setTimeout(() => { status.innerText = "⚙️ GitHub Actions orqali APK yig'ilmoqda..."; progress.style.width = "80%"; }, 2000);
+            setTimeout(() => { status.innerText = "🎉 Barcha jarayon yakunlandi!"; progress.style.width = "100%"; links.classList.remove('hidden'); }, 3000);
+        }
+    </script>
+</body>
+          </html>
+  
