@@ -3,99 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ulug'bek AI - Admin Panel & App Generator</title>
+    <title>Ulug'bek AI - Autonomous Enterprise Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: #0f172a; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        body { background: #0b0f19; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+        .glass { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .avatar-pulse { animation: pulse 1.5s infinite alternate; }
+        @keyframes pulse { 
+            0% { transform: scale(1); box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); } 
+            100% { transform: scale(1.08); box-shadow: 0 0 25px rgba(99, 102, 241, 0.8); } 
+        }
+        .speaking { animation: talk 0.3s infinite alternate; border-color: #10b981 !important; }
+        @keyframes talk { 0% { border-width: 2px; } 100% { border-width: 6px; } }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8">
+<body class="min-h-screen p-3 md:p-6">
 
-    <!-- Header / Brending -->
-    <header class="glass rounded-2xl p-6 mb-6 text-center max-w-5xl mx-auto shadow-2xl">
-        <h1 class="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-400">
-            🤖 Ulug'bek AI Company
-        </h1>
-        <p class="text-slate-400 mt-2 text-sm md:text-base">Universal No-Code Engine & Multi-Platform Generator</p>
+    <!-- RO'YXATDAN O'TISH / KIRISH MODAL OYNASI -->
+    <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+        <div class="glass max-w-md w-full rounded-2xl p-6 space-y-5 border border-indigo-500/30">
+            <div class="text-center">
+                <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-400">🤖 Ulug'bek AI</h2>
+                <p class="text-xs text-slate-400 mt-1">Platformaga kirish yoki ro'yxatdan o'tish</p>
+            </div>
+
+            <!-- Auth Tabs -->
+            <div class="flex border-b border-slate-700 text-xs font-bold text-center">
+                <button onclick="switchAuthTab('email')" id="tabEmail" class="flex-1 py-2 border-b-2 border-indigo-500 text-indigo-400">Email & Parol</button>
+                <button onclick="switchAuthTab('phone')" id="tabPhone" class="flex-1 py-2 text-slate-400">SMS Kod (SMS)</button>
+            </div>
+
+            <!-- 1. Email & Parol Formasi -->
+            <div id="formEmail" class="space-y-3">
+                <div>
+                    <label class="block text-[11px] text-slate-400 mb-1">Email manzil:</label>
+                    <input type="email" id="userEmail" placeholder="admin@ulugbek.ai" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-[11px] text-slate-400 mb-1">Parol:</label>
+                    <input type="password" id="userPassword" placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500">
+                </div>
+                <button onclick="loginUser('Email')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl text-xs shadow-lg">Kirish</button>
+            </div>
+
+            <!-- 2. Telefon & 6 talik SMS Kod Formasi -->
+            <div id="formPhone" class="space-y-3 hidden">
+                <div id="phoneStep1">
+                    <label class="block text-[11px] text-slate-400 mb-1">Telefon raqam:</label>
+                    <input type="tel" id="userPhone" placeholder="+998 90 123 45 67" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
+                    <button onclick="sendSMSCode()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs mt-3">6 talik SMS kod yuborish</button>
+                </div>
+                <div id="phoneStep2" class="hidden space-y-2">
+                    <label class="block text-[11px] text-emerald-400 font-semibold mb-1">Telefoningizga yuborilgan 6 talik kodni kiriting:</label>
+                    <div class="flex gap-2 justify-center">
+                        <input type="text" maxlength="6" id="smsCodeInput" placeholder="123456" class="w-full text-center tracking-widest text-lg bg-slate-900 border border-emerald-500 rounded-xl py-2 font-bold focus:outline-none">
+                    </div>
+                    <button onclick="verifySMSCode()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs shadow-lg">Tasdiqlash va Kirish</button>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="relative flex py-1 items-center">
+                <div class="flex-grow border-t border-slate-700"></div>
+                <span class="flex-shrink mx-2 text-[10px] text-slate-500">YOKI</span>
+                <div class="flex-grow border-t border-slate-700"></div>
+            </div>
+
+            <!-- Google OAuth Button -->
+            <button onclick="loginUser('Google')" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2">
+                <i class="fa-brands fa-google text-red-400"></i> Google akkaunt orqali kirish
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN PLATFORM INTERFACE (AUTH BAJARILGACH KO'RINADI) -->
+    <header class="glass rounded-2xl p-4 mb-6 max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <h1 class="text-xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-emerald-400">🤖 Ulug'bek AI Platform</h1>
+        </div>
+        <div id="userProfileBadge" class="flex items-center gap-3 bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700">
+            <i class="fa-solid fa-user-check text-emerald-400"></i>
+            <span id="loggedInUserText" class="text-xs font-semibold text-slate-300">Mehmon</span>
+        </div>
     </header>
 
-    <main class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <!-- Sidebar / Admin Panel Controls -->
-        <section class="glass rounded-2xl p-6 md:col-span-1 space-y-6">
-            <h2 class="text-xl font-bold border-b border-slate-700 pb-3 flex items-center gap-2">
-                <i class="fa-solid fa-sliders text-indigo-400"></i> Admin Panel
-            </h2>
-            
-            <div class="space-y-4">
-                <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700">
-                    <p class="text-xs text-slate-400">Kompaniya egasi</p>
-                    <p class="font-semibold text-emerald-400">Ulug'bek (Founder)</p>
+        <!-- 1-TIZIM: AVATAR & OVOZLI SOZLAMALAR -->
+        <section class="glass rounded-2xl p-5 flex flex-col justify-between space-y-4">
+            <div>
+                <h2 class="text-lg font-bold border-b border-slate-800 pb-3 flex items-center justify-between">
+                    <span><i class="fa-solid fa-robot text-emerald-400 mr-2"></i> AI Avatar & Voice</span>
+                    <span class="text-xs bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded">Sozlash</span>
+                </h2>
+
+                <!-- Avatar Visual & Image Upload -->
+                <div class="flex flex-col items-center justify-center my-4">
+                    <div id="avatarCircle" class="w-28 h-28 rounded-full border-4 border-indigo-500 flex items-center justify-center bg-slate-900 avatar-pulse relative overflow-hidden">
+                        <img id="avatarImage" src="" class="hidden w-full h-full object-cover rounded-full">
+                        <i id="avatarIcon" class="fa-solid fa-brain text-5xl text-emerald-400"></i>
+                        <span id="voiceWave" class="hidden absolute -bottom-2 bg-emerald-500 text-black text-[10px] font-bold px-2 py-0.5 rounded-full">Gapirmoqda...</span>
+                    </div>
+                    
+                    <input type="text" id="avatarNameInput" value="Ulug'bek AI Agent" class="text-center bg-transparent border-b border-slate-700 text-xs text-slate-200 mt-3 font-bold focus:outline-none focus:border-indigo-500">
+                    
+                    <!-- Avatar Rasm yuklash -->
+                    <label class="mt-2 text-[10px] text-indigo-400 cursor-pointer bg-slate-800 px-3 py-1 rounded-full border border-slate-700 hover:bg-slate-700">
+                        <i class="fa-solid fa-camera mr-1"></i> Avatar rasmini yuklash
+                        <input type="file" id="avatarUpload" accept="image/*" class="hidden" onchange="loadAvatarImage(event)">
+                    </label>
                 </div>
 
-                <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700">
-                    <p class="text-xs text-slate-400 mb-1">Moliyaviy Model (70/30)</p>
-                    <div class="text-sm font-medium space-y-1">
-                        <div class="flex justify-between"><span>Tadbirkor ulushi:</span> <span class="text-emerald-400 font-bold">70%</span></div>
-                        <div class="flex justify-between"><span>Admin Panel ulushi:</span> <span class="text-indigo-400 font-bold">30%</span></div>
+                <!-- Chat Messages Area -->
+                <div id="chatBox" class="h-40 overflow-y-auto bg-slate-950/60 rounded-xl p-3 space-y-2 border border-slate-800 text-xs">
+                    <div class="bg-indigo-900/40 p-2.5 rounded-lg border border-indigo-500/30">
+                        <span class="font-bold text-indigo-300">AI:</span> Salom! Platformaga xush kelibsiz. G'oyangizni ayting!
                     </div>
                 </div>
+            </div>
 
-                <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700 space-y-2 text-sm">
-                    <p class="font-semibold text-slate-300">Tizim holati:</p>
-                    <div class="flex items-center justify-between text-xs text-slate-400">
-                        <span>Neural Shield RASP:</span>
-                        <span class="text-emerald-400 font-bold">FAOL</span>
-                    </div>
-                    <div class="flex items-center justify-between text-xs text-slate-400">
-                        <span>Auto-Scaling:</span>
-                        <span class="text-indigo-400 font-bold">TAYYOR</span>
-                    </div>
+            <!-- Voice & Chat Controls -->
+            <div class="space-y-2">
+                <div class="flex gap-2">
+                    <input type="text" id="userInput" placeholder="Buyruq bering..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs focus:outline-none">
+                    <button onclick="sendChatMessage()" class="bg-indigo-600 px-3 py-2 rounded-xl text-xs font-bold"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
+                <button id="micBtn" onclick="toggleVoiceRecognition()" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-microphone text-emerald-400"></i> Mikrofonni Yoqish (Ovozli muloqot)
+                </button>
             </div>
         </section>
 
-        <!-- Main Workspace / App Generator -->
-        <section class="glass rounded-2xl p-6 md:col-span-2 space-y-6">
-            <h2 class="text-xl font-bold border-b border-slate-700 pb-3 flex items-center gap-2">
-                <i class="fa-solid fa-wand-magic-sparkles text-emerald-400"></i> Ilova va O'yin Generator
-            </h2>
-
+        <!-- 2-TIZIM: NO-CODE GENERATOR -->
+        <section class="glass rounded-2xl p-5 lg:col-span-2 flex flex-col justify-between space-y-4">
             <div>
-                <label class="block text-sm font-medium text-slate-300 mb-2">Ilovangiz yoki o'yiningiz g'oyasini kiriting:</label>
-                <textarea id="appPrompt" rows="4" class="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-4 text-slate-200 focus:outline-none focus:border-indigo-500 text-sm" placeholder="Masalan: Bolalar uchun ta'limiy 2D o'yin va ovozli AI yordamchi..."></textarea>
-            </div>
+                <h2 class="text-lg font-bold border-b border-slate-800 pb-3 flex items-center justify-between">
+                    <span><i class="fa-solid fa-wand-magic-sparkles text-indigo-400 mr-2"></i> No-Code Engine</span>
+                    <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">70/30 Monetization</span>
+                </h2>
 
-            <div class="grid grid-cols-2 gap-3 text-sm">
-                <label class="flex items-center gap-2 bg-slate-800/40 p-3 rounded-lg border border-slate-700/50 cursor-pointer">
-                    <input type="checkbox" checked class="accent-indigo-500"> Android (APK)
-                </label>
-                <label class="flex items-center gap-2 bg-slate-800/40 p-3 rounded-lg border border-slate-700/50 cursor-pointer">
-                    <input type="checkbox" checked class="accent-indigo-500"> iOS (iPhone)
-                </label>
-                <label class="flex items-center gap-2 bg-slate-800/40 p-3 rounded-lg border border-slate-700/50 cursor-pointer">
-                    <input type="checkbox" checked class="accent-indigo-500"> Web Sayt
-                </label>
-                <label class="flex items-center gap-2 bg-slate-800/40 p-3 rounded-lg border border-slate-700/50 cursor-pointer">
-                    <input type="checkbox" checked class="accent-indigo-500"> Windows (.exe)
-                </label>
-            </div>
-
-            <button onclick="generateApp()" class="w-full bg-gradient-to-r from-indigo-500 to-emerald-500 hover:from-indigo-600 hover:to-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg transition duration-200">
-                🚀 Ulug'bek AI: Ilovani Yaratish
-            </button>
-
-            <!-- Output area -->
-            <div id="outputArea" class="hidden bg-slate-900/90 border border-slate-800 rounded-xl p-4 space-y-3">
-                <p id="statusText" class="text-sm font-semibold text-indigo-400">🔍 Internet va Play Market ma'lumotlari tahlil qilinmoqda...</p>
-                <div class="w-full bg-slate-800 rounded-full h-2">
-                    <div id="progressBar" class="bg-gradient-to-r from-indigo-500 to-emerald-400 h-2 rounded-full transition-all duration-500" style="width: 20%"></div>
+                <div class="mt-4 space-y-3">
+                    <label class="block text-xs font-semibold text-slate-300">Ilova / O'yin g'oyasi:</label>
+                    <textarea id="appPrompt" rows="4" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="Masalan: Telegram va Play Marketga mos avtonom CRM ilova..."></textarea>
                 </div>
-                <div id="downloadLinks" class="hidden pt-2 space-y-2 border-t border-slate-800">
-                    <p class="text-xs text-emerald-400 font-bold">✨ Ilova muvaffaqiyatli build qilindi!</p>
-                    <a href="#" class="block bg-slate-800 hover:bg-slate-700 p-2 rounded text-xs text-indigo-300">📲 Android APK Yuklab Olish (Release)</a>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3 text-xs">
+                    <label class="flex items-center gap-2 bg-slate-900/50 p-2.5 rounded-lg border border-slate-800"><input type="checkbox" checked class="accent-indigo-500"> Android (.apk)</label>
+                    <label class="flex items-center gap-2 bg-slate-900/50 p-2.5 rounded-lg border border-slate-800"><input type="checkbox" checked class="accent-indigo-500"> iOS (App Store)</label>
+                    <label class="flex items-center gap-2 bg-slate-900/50 p-2.5 rounded-lg border border-slate-800"><input type="checkbox" checked class="accent-indigo-500"> Web App</label>
+                    <label class="flex items-center gap-2 bg-slate-900/50 p-2.5 rounded-lg border border-slate-800"><input type="checkbox" checked class="accent-indigo-500"> Windows (.exe)</label>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="startAppGeneration()" class="w-full bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-500 hover:to-emerald-500 text-white font-extrabold py-3.5 rounded-xl text-sm flex items-center justify-center gap-2">
+                    🚀 Avtonom Ilovani Yaratish
+                </button>
+
+                <div id="buildMonitor" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3 text-xs">
+                    <div class="flex justify-between items-center">
+                        <span id="buildStatus" class="font-semibold text-indigo-400">🔍 RAG Market Engine ishlamoqda...</span>
+                        <span id="buildPercent" class="font-bold text-emerald-400">10%</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-2">
+                        <div id="progressBar" class="bg-gradient-to-r from-indigo-500 to-emerald-400 h-2 rounded-full transition-all duration-300" style="width: 10%"></div>
+                    </div>
+                    <div id="downloadArea" class="hidden pt-2 border-t border-slate-800 flex gap-2">
+                        <a id="apkLink" href="#" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-2 rounded-lg text-xs flex items-center gap-1">
+                            📲 APK Faylni Yuklab Olish
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -103,23 +181,82 @@
     </main>
 
     <script>
-        function generateApp() {
-            const prompt = document.getElementById('appPrompt').value;
-            if(!prompt.trim()) { alert('Iltimos, g\'oya kiriting!'); return; }
+        // AUTH TAB SWITCH
+        function switchAuthTab(type) {
+            if(type === 'email') {
+                document.getElementById('formEmail').classList.remove('hidden');
+                document.getElementById('formPhone').classList.add('hidden');
+                document.getElementById('tabEmail').className = "flex-1 py-2 border-b-2 border-indigo-500 text-indigo-400";
+                document.getElementById('tabPhone').className = "flex-1 py-2 text-slate-400";
+            } else {
+                document.getElementById('formEmail').classList.add('hidden');
+                document.getElementById('formPhone').classList.remove('hidden');
+                document.getElementById('tabPhone').className = "flex-1 py-2 border-b-2 border-emerald-500 text-emerald-400";
+                document.getElementById('tabEmail').className = "flex-1 py-2 text-slate-400";
+            }
+        }
+
+        function loginUser(method) {
+            let identifier = "Foydalanuvchi";
+            if(method === 'Email') identifier = document.getElementById('userEmail').value || "user@ulugbek.ai";
+            if(method === 'Google') identifier = "Google User";
             
-            const output = document.getElementById('outputArea');
-            const status = document.getElementById('statusText');
-            const progress = document.getElementById('progressBar');
-            const links = document.getElementById('downloadLinks');
+            document.getElementById('loggedInUserText').innerText = identifier + " (" + method + ")";
+            document.getElementById('authModal').classList.add('hidden');
+            speakText("Xush kelibsiz! Tizimga muvaffaqiyatli kirdingiz.");
+        }
 
-            output.classList.remove('hidden');
-            links.classList.add('hidden');
+        function sendSMSCode() {
+            const phone = document.getElementById('userPhone').value;
+            if(!phone) { alert("Telefon raqamingizni kiriting!"); return; }
+            document.getElementById('phoneStep1').classList.add('hidden');
+            document.getElementById('phoneStep2').classList.remove('hidden');
+            alert("6 talik tasdiqlash kodi telefoningizga yuborildi (Simulyatsiya kodi: 123456)");
+        }
 
-            setTimeout(() => { status.innerText = "🧠 AI Agentlar va Neural Shield kodi yozilmoqda..."; progress.style.width = "50%"; }, 1000);
-            setTimeout(() => { status.innerText = "⚙️ GitHub Actions orqali APK yig'ilmoqda..."; progress.style.width = "80%"; }, 2000);
-            setTimeout(() => { status.innerText = "🎉 Barcha jarayon yakunlandi!"; progress.style.width = "100%"; links.classList.remove('hidden'); }, 3000);
+        function verifySMSCode() {
+            const code = document.getElementById('smsCodeInput').value;
+            if(code.length === 6) {
+                loginUser("SMS: " + document.getElementById('userPhone').value);
+            } else {
+                alert("Iltimos, 6 talik kodni to'liq kiriting!");
+            }
+        }
+
+        // AVATAR IMAGE UPLOAD
+        function loadAvatarImage(event) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const img = document.getElementById('avatarImage');
+                img.src = reader.result;
+                img.classList.remove('hidden');
+                document.getElementById('avatarIcon').classList.add('hidden');
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        // VOICE & GENERATION LOGIC
+        const synth = window.speechSynthesis;
+        function speakText(text) {
+            if (!synth) return;
+            synth.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'uz-UZ';
+            synth.speak(utterance);
+        }
+
+        function startAppGeneration() {
+            const prompt = document.getElementById('appPrompt').value;
+            if(!prompt.trim()) { alert("G'oya kiriting!"); return; }
+            document.getElementById('buildMonitor').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('progressBar').style.width = "100%";
+                document.getElementById('buildPercent').innerText = "100%";
+                document.getElementById('downloadArea').classList.remove('hidden');
+                speakText("Ilovangiz muvaffaqiyatli yaratildi va yuklab olishga tayyor.");
+            }, 2000);
         }
     </script>
 </body>
-          </html>
-  
+                              </html>
+    
