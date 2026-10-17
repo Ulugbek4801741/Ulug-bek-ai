@@ -154,8 +154,8 @@
 
     <!-- SYSTEM JAVASCRIPT -->
     <script>
-        // API KALITNI BIRIKTIRISH
-        const SYSTEM_API_KEY = "AQ.Ab8RN6Iix5XjSwyS1eiz2ROieYnHiZD7vB73DhIxulagZF4bkg"; 
+        // SIZ YUBORGAN HAQIQIY GEMINI API KALITI KO'CHIRILDI
+        const SYSTEM_API_KEY = "AQ.Ab8RN6JoBW6o-6IABo36beLITklpQCktHQCUBza_7YD_TaWkSw"; 
 
         let attachedFileData = null;
 
@@ -190,8 +190,7 @@
             if(attachedFileData) {
                 displayMsg += ` [Fayl: ${attachedFileData}]`;
             }
-const SYSTEM_API_KEY = "AQ.Ab8RN6Iix5XjSwyS1eiz2ROieYnHiZD7vB73DhIxulagZF4bkg";
-            
+
             chatBox.innerHTML += `<div class="bg-slate-900 p-2.5 rounded-xl text-right"><span class="font-bold text-slate-300">Siz:</span> ${displayMsg}</div>`;
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
@@ -213,8 +212,10 @@ const SYSTEM_API_KEY = "AQ.Ab8RN6Iix5XjSwyS1eiz2ROieYnHiZD7vB73DhIxulagZF4bkg";
                 if(data.candidates && data.candidates[0]) {
                     const aiReply = data.candidates[0].content.parts[0].text;
                     chatBox.innerHTML += `<div class="bg-indigo-950/50 p-2.5 rounded-xl border border-indigo-500/30 text-slate-200"><span class="font-extrabold text-indigo-300">Ulug'bek AI:</span> ${aiReply}</div>`;
+                } else if(data.error) {
+                    chatBox.innerHTML += `<div class="bg-red-950/60 p-2.5 rounded-xl text-red-300">❌ API Xatolik: ${data.error.message}</div>`;
                 } else {
-                    chatBox.innerHTML += `<div class="bg-red-950/60 p-2.5 rounded-xl text-red-300">❌ API kalit (AIzaSy...) noto'g'ri kiritilgan. Iltimos Google AI Studio'dan olingan API kalitni qo'ying.</div>`;
+                    chatBox.innerHTML += `<div class="bg-red-950/60 p-2.5 rounded-xl text-red-300">❌ Server kutilmagan javob qaytardi.</div>`;
                 }
             } catch(err) {
                 chatBox.innerHTML += `<div class="bg-red-950/60 p-2.5 rounded-xl text-red-300">❌ Serverga ulanishda xatolik yuz berdi.</div>`;
@@ -257,15 +258,18 @@ const SYSTEM_API_KEY = "AQ.Ab8RN6Iix5XjSwyS1eiz2ROieYnHiZD7vB73DhIxulagZF4bkg";
                     document.getElementById('downloadLink').href = URL.createObjectURL(blob);
                     document.getElementById('downloadLink').download = "Ulugbek_AI_App.html";
                     downloadArea.classList.remove('hidden');
+                } else if(data.error) {
+                    terminal.innerHTML += `<p class="text-red-400">[ERROR]: ${data.error.message}</p>`;
+                    document.getElementById('buildStatus').innerText = "❌ API Xatosi!";
                 } else {
                     throw new Error("Empty response");
                 }
             } catch(err) {
-                terminal.innerHTML += `<p class="text-red-400">[ERROR]: API kalit noto'g'ri (AIzaSy... kaliti kerak)!</p>`;
+                terminal.innerHTML += `<p class="text-red-400">[ERROR]: Serverga ulanishda xatolik yuz berdi!</p>`;
                 document.getElementById('buildStatus').innerText = "❌ Xatolik!";
             }
         }
     </script>
 </body>
-                        </html>
-        
+        </html>
+    
