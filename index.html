@@ -1,314 +1,213 @@
 ```html
-<!DOCTYPE html>
-<html lang="uz" class="dark h-full">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ulug'bek AI - Enterprise Hub</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        cyber: {
-                            50: '#f0fdfa',
-                            100: '#ccfbf1',
-                            400: '#2dd4bf',
-                            500: '#14b8a6',
-                            800: '#115e59',
-                            900: '#134e4a',
-                            dark: '#080d1a',
-                            card: 'rgba(15, 23, 42, 0.75)',
-                            accent: '#6366f1',
-                            neon: '#00f3ff',
-                            purple: '#a855f7'
-                        }
-                    },
-                    boxShadow: {
-                        'neon': '0 0 20px rgba(0, 243, 255, 0.35)',
-                        'purple-glow': '0 0 20px rgba(168, 85, 247, 0.35)',
-                        'card-glow': '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
-                    },
-                    animation: {
-                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'glow-pulse': 'glow 2s ease-in-out infinite alternate',
-                    },
-                    keyframes: {
-                        glow: {
-                            '0%': { boxShadow: '0 0 5px rgba(0, 243, 255, 0.2)' },
-                            '100%': { boxShadow: '0 0 20px rgba(0, 243, 255, 0.8)' }
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google Fonts: Inter & JetBrains Mono -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #040711;
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(0, 243, 255, 0.1) 0px, transparent 50%),
-                radial-gradient(at 50% 50%, rgba(168, 85, 247, 0.08) 0px, transparent 50%);
-            background-attachment: fixed;
-        }
-        .font-mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
-        .glass-panel {
-            background: rgba(13, 22, 41, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .glass-panel-glow {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(0, 243, 255, 0.25);
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
-        }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(10, 15, 30, 0.5);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(0, 243, 255, 0.3);
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 243, 255, 0.6);
-        }
-    </style>
-</head>
-<body class="text-slate-200 h-full flex flex-col antialiased selection:bg-cyan-500 selection:text-black">
+<!-- ... existing code ... -->
+        <!-- Tab navigation buttons -->
+        <div class="flex flex-wrap gap-2 mb-6 border-b border-slate-700/60 pb-3">
+            <button onclick="switchTab('chat')" id="tab-btn-chat" class="px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 shadow-lg shadow-cyan-500/10 flex items-center gap-2">
+                <i class="fas font-solid fa-comments"></i> AI Chatbot & Voice
+            </button>
+            <button onclick="switchTab('image')" id="tab-btn-image" class="px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 bg-slate-800/80 text-slate-400 hover:text-slate-200 border border-slate-700/50 flex items-center gap-2">
+                <i class="fas font-solid fa-wand-magic-sparkles text-pink-400"></i> AI Rasm Generator
+            </button>
+            <button onclick="switchTab('nocode')" id="tab-btn-nocode" class="px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 bg-slate-800/80 text-slate-400 hover:text-slate-200 border border-slate-700/50 flex items-center gap-2">
+                <i class="fas font-solid fa-code text-cyan-400"></i> No-Code App Engine
+            </button>
+        </div>
 
-    <!-- Top Navigation Header -->
-    <header class="glass-panel sticky top-0 z-40 border-b border-slate-800/80 px-4 lg:px-8 py-3">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <!-- Brand Logo -->
-            <div class="flex items-center space-x-3">
-                <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 shadow-neon">
-                    <i class="fa-solid fa-brain text-slate-900 text-xl"></i>
-                    <span class="absolute -top-1 -right-1 flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
-                    </span>
-                </div>
-                <div>
-                    <div class="flex items-center space-x-2">
-                        <span class="font-bold text-lg tracking-wider text-white">ULUG'BEK<span class="text-cyan-400">.AI</span></span>
-                        <span class="px-2 py-0.5 text-[10px] font-mono font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-full">v4.8-PRO</span>
+        <!-- TAB CONTENT 1: CHATBOT -->
+        <div id="tab-content-chat" class="space-y-6">
+<!-- ... existing code ... -->
+        </div>
+
+        <!-- TAB CONTENT 2: AI IMAGE GENERATOR (NEW FEATURE) -->
+        <div id="tab-content-image" class="hidden space-y-6">
+            <div class="glass-card rounded-2xl p-6 relative overflow-hidden border border-pink-500/30">
+                <div class="absolute -right-10 -top-10 w-48 h-48 bg-pink-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center border border-pink-500/40 text-pink-400">
+                            <i class="fas fa-image text-lg"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                                AI Rasm Studio Pro
+                                <span class="px-2.5 py-0.5 text-xs rounded-full bg-gradient-to-r from-pink-500/20 to-purple-500/20 border border-pink-500/40 text-pink-300 font-mono">v2.5 Ultra</span>
+                            </h2>
+                            <p class="text-xs text-slate-400">Matnli tavsif (Prompt) asosida professional rasmlar va san'at asarlari yarating</p>
+                        </div>
                     </div>
-                    <p class="text-xs text-slate-400 hidden sm:block">Milliy Sun'iy Intellekt Enterprise Ekotizimi</p>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- Prompt Input -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">Rasm Tavsifi (Prompt):</label>
+                        <div class="relative">
+                            <textarea id="image-prompt" rows="3" placeholder="Masalan: Fütüristik Toshkent shahri, neon chiroqlar, uchuvchi mashinalar, 8k ultra detail, cyberpunk style..." class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-pink-500/60 transition-all resize-none"></textarea>
+                            <button onclick="randomPrompt()" class="absolute right-3 bottom-3 text-xs bg-slate-800 hover:bg-slate-700 text-pink-400 px-2.5 py-1 rounded-lg border border-slate-700 transition">
+                                <i class="fas fa-dice mr-1"></i> Tasodifiy
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Options Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Style Selector -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">Uslub (Style):</label>
+                            <select id="image-style" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl p-2.5 text-sm text-slate-200 focus:outline-none focus:border-pink-500/60">
+                                <option value="photorealistic">Photorealistic (Realistik)</option>
+                                <option value="cyberpunk" selected>Cyberpunk & Sci-Fi</option>
+                                <option value="anime">Anime / Manga Style</option>
+                                <option value="3d-render">3D Digital Art / Octane</option>
+                                <option value="oil-painting">Moybo'yoq (Oil Painting)</option>
+                                <option value="minimalist">Minimalist Vector</option>
+                            </select>
+                        </div>
+
+                        <!-- Aspect Ratio -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">O'lcham (Aspect Ratio):</label>
+                            <select id="image-aspect" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl p-2.5 text-sm text-slate-200 focus:outline-none focus:border-pink-500/60">
+                                <option value="1:1">1:1 (Kvadrat - 1024x1024)</option>
+                                <option value="16:9">16:9 (Peyzaj - YouTube/Desktop)</option>
+                                <option value="9:16">9:16 (Stories/Reels/TikTok)</option>
+                            </select>
+                        </div>
+
+                        <!-- Quality/Model -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">AI Dvigatel:</label>
+                            <select id="image-engine" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl p-2.5 text-sm text-slate-200 focus:outline-none focus:border-pink-500/60">
+                                <option value="flux-1">Ulug'bek Flux-1 Engine (Tavsiya etiladi)</option>
+                                <option value="sd-xl">Stable Diffusion XL Pro</option>
+                                <option value="mid-v6">Midjourney Engine v6</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Generate Button -->
+                    <button onclick="generateImage()" id="generate-img-btn" class="w-full py-3.5 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 hover:opacity-95 text-white font-semibold rounded-xl transition shadow-lg shadow-pink-500/25 flex items-center justify-center gap-2">
+                        <i class="fas fa-wand-magic-sparkles"></i> AI Rasm Yaratish (Generate)
+                    </button>
                 </div>
             </div>
 
-            <!-- Top Header Stats / Live Status -->
-            <div class="hidden lg:flex items-center space-x-6 text-xs font-mono">
-                <div class="flex items-center space-x-2 bg-slate-900/60 px-3 py-1.5 rounded-lg border border-slate-800">
-                    <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span class="text-slate-400">Backend API:</span>
-                    <span class="text-emerald-400 font-bold" id="header-latency">14ms</span>
-                </div>
-                <div class="flex items-center space-x-2 bg-slate-900/60 px-3 py-1.5 rounded-lg border border-slate-800">
-                    <i class="fa-solid fa-shield-halved text-cyan-400"></i>
-                    <span class="text-slate-400">RASP Qalqon:</span>
-                    <span class="text-cyan-400 font-bold">FAOL (0 Tahdid)</span>
-                </div>
-                <div class="flex items-center space-x-2 bg-slate-900/60 px-3 py-1.5 rounded-lg border border-slate-800">
-                    <i class="fa-solid fa-microchip text-purple-400"></i>
-                    <span class="text-slate-400">Model:</span>
-                    <span class="text-purple-300 font-bold">Ulugbek-LLM-v4</span>
-                </div>
-            </div>
+            <!-- Output Gallery Section -->
+            <div class="glass-card rounded-2xl p-6 border border-slate-700/60">
+                <h3 class="text-md font-bold text-slate-200 mb-4 flex items-center justify-between">
+                    <span><i class="fas fa-images text-pink-400 mr-2"></i> Yaratilgan Rasmlar Galereyasi</span>
+                    <span id="gallery-count" class="text-xs text-slate-400 font-normal">0 ta rasm</span>
+                </h3>
 
-            <!-- Action Controls & Auth -->
-            <div class="flex items-center space-x-3">
-                <button onclick="toggleModal('cicd-modal')" class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
-                    <i class="fa-brands fa-github text-cyan-400"></i>
-                    <span>CI/CD Status</span>
-                </button>
-                <button onclick="toggleModal('auth-modal')" class="flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-medium shadow-neon transition transform active:scale-95">
-                    <i class="fa-solid fa-user-lock"></i>
-                    <span>Tizimga Kirish</span>
-                </button>
+                <!-- Loader -->
+                <div id="image-loader" class="hidden py-12 text-center space-y-4">
+                    <div class="inline-block w-12 h-12 border-4 border-pink-500/30 border-t-pink-500 rounded-full animate-spin"></div>
+                    <p class="text-sm text-slate-300 font-medium">AI rasm generatsiya qilmoqda, iltimos kuting...</p>
+                    <p class="text-xs text-slate-500">Bu jarayon bir necha soniya vaqt olishi mumkin</p>
+                </div>
+
+                <!-- Gallery Grid -->
+                <div id="image-gallery" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Dynamic generated images appear here -->
+                    <div id="empty-gallery-msg" class="col-span-full py-12 text-center text-slate-500 text-sm">
+                        <i class="fas fa-photo-film text-3xl mb-2 block text-slate-600"></i>
+                        Hozircha yaratilgan rasmlar yo'q. Yuqoridagi prompt bo'yicha rasm yarating!
+                    </div>
+                </div>
             </div>
         </div>
-    </header>
 
-    <!-- Main Live Dashboard Layout -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- TAB CONTENT 3: NO-CODE ENGINE -->
+        <div id="tab-content-nocode" class="hidden space-y-6">
+<!-- ... existing code ... -->
+<script>
+    // Tab Switcher Logic
+    function switchTab(tabName) {
+        const tabs = ['chat', 'image', 'nocode'];
+        tabs.forEach(t => {
+            const content = document.getElementById(`tab-content-${t}`);
+            const btn = document.getElementById(`tab-btn-${t}`);
+            if (t === tabName) {
+                content.classList.remove('hidden');
+                btn.className = "px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 shadow-lg shadow-cyan-500/10 flex items-center gap-2";
+            } else {
+                content.classList.add('hidden');
+                btn.className = "px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 bg-slate-800/80 text-slate-400 hover:text-slate-200 border border-slate-700/50 flex items-center gap-2";
+            }
+        });
+    }
 
-        <!-- LEFT COLUMN: Live Backend Status & AI Avatar Agent (4 Cols) -->
-        <section class="lg:col-span-4 flex flex-col gap-6">
+    // Preset prompts
+    const presetPrompts = [
+        "Fütüristik Toshkent shahri, neon chiroqlar, uchuvchi avtomobillar, cyberpunk uslubi, 8k ultra detailed",
+        "Sehrli o'rmon ichidagi qadimiy qasr, tumanli atmosfera, oltin nur va porlayotgan kapalaklar, fantasy style",
+        "Kosmosda suzib yurgan kiber-yo'lbars, galaktika va yulduzlar fonida, hyper-realistic, digital art",
+        "Zamonaviy minimalistik kofe do'koni, iliq yoritish, yomg'irli shahar ko'rinishi, cozy aesthetic 8k"
+    ];
 
-            <!-- 1. Live Backend Status Indicator Panel -->
-            <div class="glass-panel rounded-2xl p-5 border border-slate-800 relative overflow-hidden">
-                <div class="flex items-center justify-between mb-4 border-b border-slate-800/80 pb-3">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-server text-cyan-400"></i>
-                        <h2 class="font-bold text-sm tracking-wide text-white">Backend Status Monitor</h2>
-                    </div>
-                    <span class="flex h-2.5 w-2.5 relative">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                    </span>
-                </div>
+    function randomPrompt() {
+        const randIndex = Math.floor(Math.random() * presetPrompts.length);
+        document.getElementById('image-prompt').value = presetPrompts[randIndex];
+    }
 
-                <div class="grid grid-cols-2 gap-3 text-xs font-mono">
-                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                        <span class="text-slate-400 block mb-1">Server Tuguni</span>
-                        <span class="text-emerald-400 font-semibold flex items-center gap-1.5">
-                            <i class="fa-solid fa-circle-check text-[10px]"></i> Tashkent-Cluster-1
-                        </span>
-                    </div>
-                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                        <span class="text-slate-400 block mb-1">Kechikish (Latency)</span>
-                        <span class="text-cyan-400 font-semibold" id="card-latency">14 ms (Ideal)</span>
-                    </div>
-                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                        <span class="text-slate-400 block mb-1">RASP Neural Shield</span>
-                        <span class="text-purple-400 font-semibold flex items-center gap-1">
-                            <i class="fa-solid fa-shield-virus text-[10px]"></i> Himoyalangan
-                        </span>
-                    </div>
-                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                        <span class="text-slate-400 block mb-1">Faol Ulanish</span>
-                        <span class="text-amber-400 font-semibold">gRPC / WebSocket</span>
-                    </div>
-                </div>
-            </div>
+    let generatedImagesCount = 0;
 
-            <!-- 2. AI Voice & Interactive Avatar Agent -->
-            <div class="glass-panel rounded-2xl p-5 border border-slate-800 flex flex-col flex-1 relative">
-                <div class="flex items-center justify-between mb-3 border-b border-slate-800/80 pb-3">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-robot text-purple-400"></i>
-                        <h2 class="font-bold text-sm tracking-wide text-white">AI Ovozli Agent & Avatar</h2>
-                    </div>
-                    <span class="px-2 py-0.5 text-[10px] font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-full">LIVE AVATAR</span>
-                </div>
+    function generateImage() {
+        const promptInput = document.getElementById('image-prompt').value.trim();
+        if (!promptInput) {
+            alert("Iltimos, rasm yaratish uchun prompt (tavsif) kiriting!");
+            return;
+        }
 
-                <!-- Avatar Box & Wave Visualizer -->
-                <div class="relative bg-slate-950/80 rounded-xl p-4 border border-slate-800/80 flex flex-col items-center justify-center text-center overflow-hidden mb-4">
-                    <!-- Glowing aura background -->
-                    <div id="avatar-glow" class="absolute w-28 h-28 bg-purple-600/30 rounded-full blur-xl transition-all duration-300"></div>
+        const style = document.getElementById('image-style').value;
+        const loader = document.getElementById('image-loader');
+        const gallery = document.getElementById('image-gallery');
+        const emptyMsg = document.getElementById('empty-gallery-msg');
+        const btn = document.getElementById('generate-img-btn');
 
-                    <!-- Avatar Graphic -->
-                    <div class="relative z-10 w-24 h-24 rounded-full border-2 border-cyan-400/60 p-1 mb-2 bg-slate-900 shadow-neon">
-                        <img id="avatar-img" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80" alt="Ulugbek AI Avatar" class="w-full h-full rounded-full object-cover transition duration-300">
-                        <div class="absolute bottom-0 right-0 w-5 h-5 bg-emerald-500 border-2 border-slate-900 rounded-full flex items-center justify-center">
-                            <i class="fa-solid fa-check text-[8px] text-black"></i>
-                        </div>
-                    </div>
+        // Show Loader & Disable Button
+        loader.classList.remove('hidden');
+        if (emptyMsg) emptyMsg.classList.add('hidden');
+        btn.disabled = true;
+        btn.classList.add('opacity-50');
 
-                    <h3 class="text-sm font-bold text-white mb-0.5">Ulug'bek AI Assistant</h3>
-                    <p class="text-[11px] text-slate-400 font-mono mb-3" id="agent-status-text">Ovozli muloqotga tayyor</p>
+        setTimeout(() => {
+            // Generate Pollinations AI URL based on prompt and style
+            const fullPrompt = encodeURIComponent(`${promptInput}, ${style} style, high quality, highly detailed, 8k resolution`);
+            const seed = Math.floor(Math.random() * 999999);
+            const imageUrl = `https://image.pollinations.ai/prompt/${fullPrompt}?seed=${seed}&width=1024&height=1024&nologo=true`;
 
-                    <!-- Wave Visualizer Simulation -->
-                    <div class="w-full h-8 flex items-center justify-center space-x-1 px-4 mb-2">
-                        <div class="wave-bar w-1 bg-cyan-400 h-2 rounded-full transition-all duration-150"></div>
-                        <div class="wave-bar w-1 bg-cyan-400 h-4 rounded-full transition-all duration-150"></div>
-                        <div class="wave-bar w-1 bg-purple-400 h-6 rounded-full transition-all duration-150"></div>
-                        <div class="wave-bar w-1 bg-cyan-400 h-3 rounded-full transition-all duration-150"></div>
-                        <div class="wave-bar w-1 bg-purple-500 h-7 rounded-full transition-all duration-150"></div>
-                        <div class="wave-bar w-1 bg-cyan-400 h-2 rounded-full transition-all duration-150"></div>
-                        <div class="wave-bar w-1 bg-indigo-400 h-5 rounded-full transition-all duration-150"></div>
-                        <div class="wave-bar w-1 bg-cyan-400 h-2 rounded-full transition-all duration-150"></div>
-                    </div>
+            generatedImagesCount++;
+            document.getElementById('gallery-count').innerText = `${generatedImagesCount} ta rasm`;
 
-                    <!-- Voice Controls Button -->
-                    <div class="flex items-center space-x-3 mt-1 z-10">
-                        <button id="mic-toggle-btn" onclick="toggleMicrophone()" class="p-3 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 rounded-full transition active:scale-95 shadow-neon">
-                            <i class="fa-solid fa-microphone text-base" id="mic-icon"></i>
-                        </button>
-                        <button onclick="speakAgentGreeting()" class="px-3 py-1.5 text-xs font-mono bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 rounded-lg transition">
-                            <i class="fa-solid fa-volume-high mr-1"></i> Ovoz Sinovi
-                        </button>
+            const imgCard = document.createElement('div');
+            imgCard.className = "glass-card rounded-xl overflow-hidden border border-slate-700/80 hover:border-pink-500/50 transition duration-300 group flex flex-col";
+            imgCard.innerHTML = `
+                <div class="relative overflow-hidden bg-slate-900 aspect-square">
+                    <img src="${imageUrl}" alt="${promptInput}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" onerror="this.src='https://placehold.co/600x600/1e293b/ec4899?text=AI+Rasm+Xatoligi'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-3 gap-2">
+                        <a href="${imageUrl}" target="_blank" download="ai-image.jpg" class="flex-1 text-center py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-lg text-xs font-semibold shadow">
+                            <i class="fas fa-download mr-1"></i> Yuklab olish
+                        </a>
                     </div>
                 </div>
-
-                <!-- AI Live Interactive Chat Log -->
-                <div class="flex-1 flex flex-col justify-between bg-slate-950/50 rounded-xl border border-slate-800 p-3 h-64 lg:h-auto">
-                    <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 pr-1 text-xs">
-                        <div class="flex gap-2.5">
-                            <div class="w-6 h-6 rounded-full bg-cyan-500/20 border border-cyan-400 flex items-center justify-center shrink-0 text-cyan-400 font-bold text-[10px]">AI</div>
-                            <div class="bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-slate-300 leading-relaxed max-w-[85%]">
-                                Assalomu aleykum! Men <b>Ulug'bek AI Enterprise</b> yordamchisiman. Dasturiy ta'minot arxitekturasi yoki savollaringiz bo'yicha yordam berishga tayyorman.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Input -->
-                    <form onsubmit="handleChatSubmit(event)" class="mt-3 flex items-center gap-2">
-                        <input type="text" id="chat-input" placeholder="Savol yoki buyruq kiriting..." class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500">
-                        <button type="submit" class="p-2 bg-cyan-500 text-slate-950 font-bold rounded-lg hover:bg-cyan-400 transition">
-                            <i class="fa-solid fa-paper-plane text-xs"></i>
-                        </button>
-                    </form>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- RIGHT COLUMN: No-Code App Engine & Active Revenue/Shield Dashboard (8 Cols) -->
-        <section class="lg:col-span-8 flex flex-col gap-6">
-
-            <!-- 3. No-Code App Engine (Auto-Build Terminal) -->
-            <div class="glass-panel-glow rounded-2xl p-5 border border-cyan-500/30 relative">
-                <div class="flex flex-wrap items-center justify-between gap-2 mb-4 border-b border-slate-800 pb-3">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-wand-magic-sparkles text-cyan-400 text-base"></i>
-                        <h2 class="font-bold text-base tracking-wide text-white">No-Code Avtonom App Engine</h2>
-                    </div>
-                    <span class="px-2.5 py-1 text-xs font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-full flex items-center gap-1.5">
-                        <i class="fa-solid fa-bolt text-[10px]"></i> Avto-Generatsiya Moduli
-                    </span>
-                </div>
-
-                <!-- Prompt Input Area -->
-                <div class="mb-4">
-                    <label class="block text-xs font-mono text-slate-400 mb-1.5">Ilova yoki O'yin Prompt Tavsifi:</label>
-                    <textarea id="app-prompt" rows="3" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-400 font-mono" placeholder="Masalan: Fintech dashboard ilovasi dashboard grafiklari, hamyon balansi, RASP xavfsizlik funksiyalari va dark mode bilan..."></textarea>
-                </div>
-
-                <!-- Multi-platform Target Switches -->
-                <div class="mb-5">
-                    <span class="block text-xs font-mono text-slate-400 mb-2">Maqsadli Platformalar (Multi-Target):</span>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        <label class="flex items-center justify-between p-2.5 bg-slate-900/80 border border-slate-800 rounded-xl cursor-pointer hover:border-slate-700 transition">
-                            <span class="text-xs font-medium flex items-center gap-2"><i class="fa-brands fa-android text-emerald-400"></i> Android APK</span>
-                            <input type="checkbox" checked class="accent-cyan-500 rounded">
-                        </label>
-                        <label class="flex items-center justify-between p-2.5 bg-slate-900/80 border border-slate-800 rounded-xl cursor-pointer hover:border-slate-700 transition">
-                            <span class="text-xs font-medium flex items-center gap-2"><i class="fa-brands fa-apple text-slate-300"></i> iOS App</span>
-                            <input type="checkbox" checked class="accent-cyan-500 rounded">
-                        </label>
-                        <label class="flex items-center justify-between p-2.5 bg-slate-900/80 border border-slate-800 rounded-xl cursor-pointer hover:border-slate-700 transition">
-                            <span class="text-xs font-medium flex items-center gap-2"><i class="fa-solid fa-globe text-cyan-400"></i> Web App</span>
-                            <input type="checkbox" checked class="accent-cyan-500 rounded">
-                        </label>
-                        <label class="flex items-center justify-between p-2.5 bg-slate-900/80 border border-slate-800 rounded-xl cursor-pointer hover:border-slate-700 transition">
-                            <span class="text-xs font-medium flex items-center gap-2"><i class="fa-brands fa-windows text-blue-400"></i> Windows EXE</span>
-                            <input type="checkbox" class="accent-cyan-500 rounded">
-                        </label>
+                <div class="p-3 flex-1 flex flex-col justify-between bg-slate-900/60">
+                    <p class="text-xs text-slate-300 line-clamp-2 font-medium" title="${promptInput}">${promptInput}</p>
+                    <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-800 text-[10px] text-slate-400">
+                        <span class="bg-pink-500/10 text-pink-400 px-2 py-0.5 rounded border border-pink-500/20 capitalize">${style}</span>
+                        <span>1024x1024</span>
                     </div>
                 </div>
+            `;
 
-                <!-- Execution Controls -->
-                <div class="flex items-center justify-between gap-3 mb-4">
-                    <button onclick="sta
+            gallery.prepend(imgCard);
+
+            // Hide Loader & Enable Button
+            loader.classList.add('hidden');
+            btn.disabled = false;
+            btn.classList.remove('opacity-50');
+        }, 2000);
+    }
+</script>
+<!-- ... existing code ... -->
+```
