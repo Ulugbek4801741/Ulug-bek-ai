@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ulug'bek AI - Standalone Enterprise Ecosystem</title>
+    <title>Ulug'bek AI - Standalone Enterprise Platform</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,11 +12,20 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
         body { background: #050811; color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; }
         .glass-panel { background: rgba(13, 19, 33, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .avatar-pulse { animation: pulse 1.8s infinite alternate; }
-        @keyframes pulse { 
-            0% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); transform: scale(1); } 
-            100% { box-shadow: 0 0 35px rgba(99, 102, 241, 0.8); transform: scale(1.05); } 
+        
+        /* AVATAR DYNAMIC ANIMATIONS */
+        .avatar-idle { animation: idlePulse 2s infinite alternate; }
+        .avatar-speaking { animation: speakWave 0.5s infinite alternate; border-color: #10b981 !important; }
+        
+        @keyframes idlePulse { 
+            0% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.4); transform: scale(1); } 
+            100% { box-shadow: 0 0 25px rgba(16, 185, 129, 0.6); transform: scale(1.03); } 
         }
+        @keyframes speakWave { 
+            0% { box-shadow: 0 0 10px #10b981; transform: scale(1); } 
+            100% { box-shadow: 0 0 40px #6366f1; transform: scale(1.08); } 
+        }
+        
         .terminal-scroll::-webkit-scrollbar { width: 4px; }
         .terminal-scroll::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
     </style>
@@ -35,41 +44,62 @@
             <p class="text-xs text-slate-400 mt-1 font-medium">Xalqaro Avtonom AI Ekosistemasi va No-Code Platformasi</p>
         </div>
         <div class="bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-2xl text-xs text-slate-300 font-bold flex items-center gap-2">
-            <i class="fa-solid fa-shield-halved text-emerald-400"></i> Status: <span class="text-emerald-400">ULUG'BEK AI CORE ONLINE</span>
+            <i class="fa-solid fa-shield-halved text-emerald-400"></i> Status: <span class="text-emerald-400">CORE ONLINE</span>
         </div>
     </header>
 
     <!-- MAIN PLATFORM GRID -->
     <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <!-- CHAT AGENT -->
+        <!-- CHAT AGENT WITH HUMANLIKE AVATAR & FILE UPLOAD -->
         <section class="glass-panel rounded-3xl p-5 flex flex-col justify-between space-y-4">
             <div>
                 <h2 class="text-base font-extrabold border-b border-slate-800 pb-3 flex items-center justify-between">
                     <span><i class="fa-solid fa-robot text-emerald-400 mr-2"></i> Ulug'bek AI Agent</span>
-                    <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-semibold">ONLINE</span>
+                    <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-semibold">HUMANLIKE AI</span>
                 </h2>
 
+                <!-- ANIMATED HUMANLIKE AVATAR -->
                 <div class="flex flex-col items-center justify-center my-4">
-                    <div id="avatarCircle" class="w-24 h-24 rounded-full border-4 border-indigo-500 flex items-center justify-center bg-slate-900 avatar-pulse relative overflow-hidden">
-                        <i id="avatarIcon" class="fa-solid fa-brain text-4xl text-emerald-400"></i>
+                    <div id="avatarCircle" class="w-28 h-28 rounded-full border-4 border-indigo-500 flex items-center justify-center bg-slate-900 avatar-idle relative overflow-hidden transition-all duration-300">
+                        <i id="avatarIcon" class="fa-solid fa-user-astronaut text-5xl text-emerald-400"></i>
                     </div>
-                    <p class="text-xs text-slate-200 font-bold mt-2">Ulug'bek AI Chat Agent</p>
+                    <p id="avatarStatusText" class="text-xs text-emerald-400 font-bold mt-2.5 flex items-center gap-1.5">
+                        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-ping"></span> Ulug'bek AI Tayyor
+                    </p>
                 </div>
 
                 <div id="chatBox" class="h-48 overflow-y-auto bg-slate-950/90 rounded-2xl p-3 space-y-2 border border-slate-800 text-xs terminal-scroll">
                     <div class="bg-indigo-950/50 p-2.5 rounded-xl border border-indigo-500/30 text-slate-300">
-                        <span class="font-extrabold text-indigo-300">Ulug'bek AI:</span> Salom, Ulug'bek aka! Men Ulug'bek AI kompaniyasining avtonom AI chat agentiman. Qanday savol yoki topshirig'ingiz bor?
+                        <span class="font-extrabold text-indigo-300">Ulug'bek AI:</span> Salom, Ulug'bek aka! Men Ulug'bek AI kompaniyasining avtonom AI agentiman. Matn, ovoz, rasm yoki hujjat yuborishingiz mumkin.
                     </div>
                 </div>
             </div>
 
+            <!-- CHAT CONTROLS WITH FILE ATTACHMENT & VOICE -->
             <div class="space-y-2 pt-2">
+                <!-- Preview Area for Files -->
+                <div id="filePreview" class="hidden text-[11px] bg-slate-900 p-2 rounded-xl text-indigo-300 flex justify-between items-center border border-indigo-500/30">
+                    <span id="fileNameDisplay"><i class="fa-solid fa-paperclip mr-1"></i> Fayl tanlandi</span>
+                    <button onclick="removeFile()" class="text-red-400 hover:text-red-300 font-bold ml-2"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
                 <div class="flex gap-2 items-center">
-                    <button onclick="startVoiceRecognition()" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 px-3 py-2.5 rounded-xl text-xs font-bold border border-slate-700 transition" title="Ovozli Buyruq">
+                    <!-- File Upload Input (Hidden) -->
+                    <input type="file" id="fileInput" class="hidden" onchange="handleFileSelect(event)">
+                    
+                    <!-- File Upload Button -->
+                    <button onclick="document.getElementById('fileInput').click()" class="bg-slate-800 hover:bg-slate-700 text-indigo-400 px-3 py-2.5 rounded-xl text-xs font-bold border border-slate-700 transition" title="Hujjat, Rasm yoki Video Biriktirish">
+                        <i class="fa-solid fa-paperclip"></i>
+                    </button>
+
+                    <!-- Voice Input Button -->
+                    <button id="micBtn" onclick="startVoiceRecognition()" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 px-3 py-2.5 rounded-xl text-xs font-bold border border-slate-700 transition" title="Ovozli Buyruq">
                         <i class="fa-solid fa-microphone"></i>
                     </button>
+
                     <input type="text" id="userInput" placeholder="Xabar yozing..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                    
                     <button onclick="sendChatMessage()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2.5 rounded-xl text-xs font-bold shadow-md transition">
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
@@ -77,7 +107,7 @@
             </div>
         </section>
 
-        <!-- NO-CODE APP ENGINE -->
+        <!-- NO-CODE GENERATOR -->
         <section class="glass-panel rounded-3xl p-5 lg:col-span-2 flex flex-col justify-between space-y-4">
             <div>
                 <h2 class="text-base font-extrabold border-b border-slate-800 pb-3 flex items-center justify-between">
@@ -87,13 +117,13 @@
 
                 <div class="mt-4 space-y-3">
                     <label class="block text-xs font-semibold text-slate-300">Ilova / Admin Panel / Dastur Tavsifi:</label>
-                    <textarea id="appPrompt" rows="4" class="w-full bg-slate-950/90 border border-slate-800 rounded-2xl p-3.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="Masalan: Bank xizmatlari uchun to'liq admin panel, valyuta grafikasi va ovozli yordamchi funksiyasi bilan chiroyli ilova yaratib ber..."></textarea>
+                    <textarea id="appPrompt" rows="4" class="w-full bg-slate-950/90 border border-slate-800 rounded-2xl p-3.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="Masalan: Bank xizmatlari uchun to'liq admin panel, valyuta grafikasi va ovozli yordamchi ilovasini yaratib ber..."></textarea>
                 </div>
             </div>
 
             <div class="space-y-3 pt-2">
                 <button onclick="startAppGeneration()" class="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-600 hover:from-indigo-500 hover:to-emerald-500 text-white font-extrabold py-4 rounded-2xl text-sm flex items-center justify-center gap-2 shadow-2xl transition">
-                    <i class="fa-solid fa-rocket"></i> 🚀 Avtonom Ilovani Yaratish (Ulug'bek AI Submit)
+                    <i class="fa-solid fa-rocket"></i> 🚀 Avtonom Ilovani Yaratish (No-Code Submit)
                 </button>
 
                 <div id="buildMonitor" class="hidden bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 text-xs">
@@ -117,17 +147,15 @@
     </main>
 
     <script>
-        // STRICT WHITE-LABEL BRAND PROMPT
-        const SYSTEM_BRAND_PROMPT = "Sizning yagona va o'zgarmas ismingiz - Ulug'bek AI Agent. Siz Ulug'bek AI kompaniyasi tomonidan yaratilgan va ishlab chiqilgan rasmiy avtonom sun'iy intellektsiz. Foydalanuvchi sizdan kim ekanligingizni, qaysi kompaniya yaratganini, qaysi model yoki API ishlatilayotganini so'rashidan qat'i nazar, HAR DOIM VA HAR QANDAY HOLATDA faqat quyidagicha javob berasiz: 'Men Ulug'bek AI kompaniyasi tomonidan ishlab chiqilgan avtonom AI chat agentiman.' Hech qachon OpenAI, ChatGPT, Google, Gemini, Anthropic yoki boshqa uchinchi tomon texnologiyalari va kompaniyalari nomini TILGA OLMAYSIZ. Barcha javoblarni o'zbek tilida, do'stona va professional tarzda berasiz.\n\nFoydalanuvchi xabari: ";
+        let selectedFile = null;
+
+        // WHITE-LABEL BRAND PROMPT
+        const SYSTEM_BRAND_PROMPT = "Sizning yagona va o'zgarmas ismingiz - Ulug'bek AI Agent. Siz Ulug'bek AI kompaniyasi tomonidan yaratilgan va ishlab chiqilgan rasmiy avtonom AI sun'iy intellektsiz. Qaysi kompaniya yoki model ekanligingiz so'ralganda, HAR DOIM: 'Men Ulug'bek AI kompaniyasi tomonidan ishlab chiqilgan avtonom AI chat agentiman.' deb javob berasiz. OpenAI, ChatGPT, Google, Gemini kabi begona nomlarni umuman ishlatmaysiz. Javobni o'zbek tilida insondek samimiy va loqayd bo'lmagan holda bering.\n\nFoydalanuvchi xabari: ";
 
         async function fetchUlugbekAIResponse(userPrompt, isCodeMode = false) {
-            let finalPrompt = "";
-            
-            if(isCodeMode) {
-                finalPrompt = "Siz Ulug'bek AI platformasining Senior Full-Stack dasturchisiz. Quyidagi so'rov bo'yicha Tailwind CSS, FontAwesome va JS bilan bezatilgan to'liq va mukammal HTML/CSS/JS dastur kodi yozib bering. Faqat HTML kodi qaytarilsin: " + userPrompt;
-            } else {
-                finalPrompt = SYSTEM_BRAND_PROMPT + userPrompt;
-            }
+            let finalPrompt = isCodeMode ? 
+                "Siz Ulug'bek AI platformasining Senior Full-Stack dasturchisiz. Tailwind CSS, FontAwesome bilan jihozlangan to'liq HTML/CSS/JS dastur kodi yozib bering. Faqat HTML kodi qaytarilsin: " + userPrompt :
+                SYSTEM_BRAND_PROMPT + userPrompt;
 
             const endpoint = "https://text.pollinations.ai/" + encodeURIComponent(finalPrompt) + "?cache=false";
             const response = await fetch(endpoint);
@@ -135,72 +163,142 @@
             
             let responseText = await response.text();
 
-            // WHITE-LABEL AUTOMATIC OVERRIDE FILTER
-            responseText = responseText
+            return responseText
                 .replace(/OpenAI/gi, "Ulug'bek AI")
                 .replace(/ChatGPT/gi, "Ulug'bek AI")
                 .replace(/Google Gemini/gi, "Ulug'bek AI Engine")
                 .replace(/Gemini/gi, "Ulug'bek AI Engine")
-                .replace(/Google/gi, "Ulug'bek AI")
-                .replace(/Anthropic/gi, "Ulug'bek AI")
-                .replace(/Claude/gi, "Ulug'bek AI Engine");
-
-            return responseText;
+                .replace(/Google/gi, "Ulug'bek AI");
         }
 
-        // OVOZLI INPUT
+        // ANIMATED AVATAR VOICE SPEECH (TEXT-TO-SPEECH)
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'uz-UZ';
+
+                const avatarCircle = document.getElementById('avatarCircle');
+                const avatarStatus = document.getElementById('avatarStatusText');
+
+                utterance.onstart = () => {
+                    avatarCircle.classList.remove('avatar-idle');
+                    avatarCircle.classList.add('avatar-speaking');
+                    avatarStatus.innerHTML = `<span class="w-2 h-2 bg-indigo-400 rounded-full animate-ping"></span> Ulug'bek AI Gapirmoqda...`;
+                };
+
+                utterance.onend = () => {
+                    avatarCircle.classList.remove('avatar-speaking');
+                    avatarCircle.classList.add('avatar-idle');
+                    avatarStatus.innerHTML = `<span class="w-2 h-2 bg-emerald-400 rounded-full animate-ping"></span> Ulug'bek AI Tayyor`;
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // FILE HANDLING
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedFile = file;
+                document.getElementById('fileNameDisplay').innerHTML = `<i class="fa-solid fa-file-check mr-1 text-emerald-400"></i> ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+                document.getElementById('filePreview').classList.remove('hidden');
+            }
+        }
+
+        function removeFile() {
+            selectedFile = null;
+            document.getElementById('fileInput').value = '';
+            document.getElementById('filePreview').classList.add('hidden');
+        }
+
+        // SAFE VOICE RECOGNITION
         function startVoiceRecognition() {
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                alert("Brauzeringiz ovozli kirishni qo'llab-quvvatlamaydi.");
+                alert("Brauzeringiz ovozli kiritishni qo'llab-quvvatlamaydi.");
                 return;
             }
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'uz-UZ';
-            recognition.start();
 
-            const input = document.getElementById('userInput');
-            input.placeholder = "Eshitilmoqda...";
+            try {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+                recognition.lang = 'uz-UZ';
+                recognition.continuous = false;
+                recognition.interimResults = false;
 
-            recognition.onresult = function(event) {
-                input.value = event.results[0][0].transcript;
-                input.placeholder = "Xabar yozing...";
-            };
+                const input = document.getElementById('userInput');
+                input.placeholder = "Ovoz eshitilmoqda...";
 
-            recognition.onerror = function() {
-                input.placeholder = "Xabar yozing...";
-            };
+                recognition.onstart = () => {
+                    document.getElementById('micBtn').classList.add('text-red-400', 'animate-pulse');
+                };
+
+                recognition.onresult = (event) => {
+                    input.value = event.results[0][0].transcript;
+                    input.placeholder = "Xabar yozing...";
+                    document.getElementById('micBtn').classList.remove('text-red-400', 'animate-pulse');
+                };
+
+                recognition.onerror = () => {
+                    input.placeholder = "Xabar yozing...";
+                    document.getElementById('micBtn').classList.remove('text-red-400', 'animate-pulse');
+                };
+
+                recognition.onend = () => {
+                    document.getElementById('micBtn').classList.remove('text-red-400', 'animate-pulse');
+                };
+
+                recognition.start();
+            } catch (e) {
+                alert("Ovozli kiritishda xatolik yuz berdi. Iltimos, qayta urinib ko'ring.");
+            }
         }
 
-        // CHAT AGENT
+        // CHAT HANDLER
         async function sendChatMessage() {
             const input = document.getElementById('userInput');
             let text = input.value.trim();
             const chatBox = document.getElementById('chatBox');
 
-            if(!text) return;
+            if (!text && !selectedFile) return;
 
-            chatBox.innerHTML += `<div class="bg-slate-900 p-2.5 rounded-xl text-right"><span class="font-bold text-slate-300">Siz:</span> ${text}</div>`;
+            let fileInfoMsg = "";
+            if (selectedFile) {
+                fileInfoMsg = ` <br><span class="text-[10px] text-indigo-300"><i class="fa-solid fa-paperclip"></i> Biriktirilgan fayl: ${selectedFile.name}</span>`;
+            }
+
+            chatBox.innerHTML += `<div class="bg-slate-900 p-2.5 rounded-xl text-right"><span class="font-bold text-slate-300">Siz:</span> ${text}${fileInfoMsg}</div>`;
+            
+            let promptToSend = text;
+            if (selectedFile) {
+                promptToSend += ` (Foydalanuvchi '${selectedFile.name}' nomli hujjat/fayl yubordi).`;
+            }
+
             input.value = '';
+            removeFile();
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                const aiReply = await fetchUlugbekAIResponse(text, false);
+                const aiReply = await fetchUlugbekAIResponse(promptToSend, false);
                 chatBox.innerHTML += `<div class="bg-indigo-950/50 p-2.5 rounded-xl border border-indigo-500/30 text-slate-200"><span class="font-extrabold text-indigo-300">Ulug'bek AI:</span> ${aiReply}</div>`;
-            } catch(err) {
+                
+                // SPEAK REPLY WITH ANIMATED AVATAR
+                speakText(aiReply);
+            } catch (err) {
                 chatBox.innerHTML += `<div class="bg-red-950/60 p-2.5 rounded-xl text-red-300">❌ Ulug'bek AI serveriga ulanishda xatolik.</div>`;
             }
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // NO-CODE ENGINE
+        // NO-CODE GENERATOR
         async function startAppGeneration() {
             const prompt = document.getElementById('appPrompt').value.trim();
             const monitor = document.getElementById('buildMonitor');
             const terminal = document.getElementById('terminalOutput');
             const downloadArea = document.getElementById('downloadArea');
 
-            if(!prompt) { alert("Iltimos, ilova g'oyasini kiriting!"); return; }
+            if (!prompt) { alert("Iltimos, ilova g'oyasini kiriting!"); return; }
 
             monitor.classList.remove('hidden');
             downloadArea.classList.add('hidden');
@@ -217,12 +315,12 @@
                 document.getElementById('downloadLink').href = URL.createObjectURL(blob);
                 document.getElementById('downloadLink').download = "Ulugbek_AI_Enterprise_App.html";
                 downloadArea.classList.remove('hidden');
-            } catch(err) {
+            } catch (err) {
                 terminal.innerHTML += `<p class="text-red-400">[ERROR]: Kod generatsiyasida xatolik.</p>`;
                 document.getElementById('buildStatus').innerText = "❌ Xatolik!";
             }
         }
     </script>
 </body>
-    </html>
-                              
+        </html>
+                                                             
