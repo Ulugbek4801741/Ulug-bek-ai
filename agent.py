@@ -50,14 +50,14 @@
             <p class="text-xs text-slate-400 mt-1 font-medium">Universal Autonomous No-Code Engine & Multi-Agent Ecosystem</p>
         </div>
         <div class="bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-2xl text-xs text-slate-300 font-bold flex items-center gap-2">
-            <i class="fa-solid fa-shield-halved text-emerald-400"></i> Status: <span class="text-emerald-400">ONLINE (70/30 Share Active)</span>
+            <i class="fa-solid fa-shield-halved text-emerald-400"></i> Status: <span class="text-emerald-400">ONLINE (Protected Backend)</span>
         </div>
     </header>
 
     <!-- MAIN PLATFORM GRID -->
     <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <!-- LEFT COLUMN: CHAT & FILE UPLOAD AGENT -->
+        <!-- CHAT AGENT -->
         <section class="glass-panel rounded-3xl p-5 flex flex-col justify-between space-y-4">
             <div>
                 <h2 class="text-base font-extrabold border-b border-slate-800 pb-3 flex items-center justify-between">
@@ -65,7 +65,6 @@
                     <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-semibold">ONLINE</span>
                 </h2>
 
-                <!-- Interactive Avatar -->
                 <div class="flex flex-col items-center justify-center my-4">
                     <div id="avatarCircle" class="w-24 h-24 rounded-full border-4 border-indigo-500 flex items-center justify-center bg-slate-900 avatar-pulse relative overflow-hidden">
                         <i id="avatarIcon" class="fa-solid fa-brain text-4xl text-emerald-400"></i>
@@ -73,30 +72,16 @@
                     <p class="text-xs text-slate-200 font-bold mt-2">Ulug'bek AI Agent</p>
                 </div>
 
-                <!-- Chat Box -->
                 <div id="chatBox" class="h-48 overflow-y-auto bg-slate-950/90 rounded-2xl p-3 space-y-2 border border-slate-800 text-xs terminal-scroll">
                     <div class="bg-indigo-950/50 p-2.5 rounded-xl border border-indigo-500/30 text-slate-300">
-                        <span class="font-extrabold text-indigo-300">Ulug'bek AI:</span> Salom, Ulug'bek aka! Menga istalgan savolni yozing yoki fayl yuboring.
+                        <span class="font-extrabold text-indigo-300">Ulug'bek AI:</span> Salom, Ulug'bek aka! Menga savol yuboring, backend orqali javob beraman.
                     </div>
                 </div>
             </div>
 
-            <!-- Chat Input & File Upload Controls -->
             <div class="space-y-2 pt-2">
-                <div id="fileNameDisplay" class="hidden text-[10px] text-emerald-400 bg-emerald-950/40 p-1.5 rounded-lg border border-emerald-500/30 flex justify-between items-center">
-                    <span id="attachedFileName">Fayl biriktirildi</span>
-                    <button onclick="removeAttachedFile()" class="text-red-400 font-bold hover:text-red-300">✕ O'chirish</button>
-                </div>
-
                 <div class="flex gap-2 items-center">
-                    <!-- File Upload Button -->
-                    <label class="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 px-3 py-2.5 rounded-xl text-xs cursor-pointer transition flex items-center justify-center" title="Fayl yuklash">
-                        <i class="fa-solid fa-paperclip text-indigo-400"></i>
-                        <input type="file" id="chatFileInput" class="hidden" onchange="handleFileUpload(event)">
-                    </label>
-
                     <input type="text" id="userInput" placeholder="Xabar yozing..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
-                    
                     <button onclick="sendChatMessage()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2.5 rounded-xl text-xs font-bold shadow-md transition">
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
@@ -104,7 +89,7 @@
             </div>
         </section>
 
-        <!-- RIGHT COLUMN: NO-CODE ENGINE -->
+        <!-- NO-CODE APP ENGINE -->
         <section class="glass-panel rounded-3xl p-5 lg:col-span-2 flex flex-col justify-between space-y-4">
             <div>
                 <h2 class="text-base font-extrabold border-b border-slate-800 pb-3 flex items-center justify-between">
@@ -116,16 +101,8 @@
                     <label class="block text-xs font-semibold text-slate-300">Ilova yoki O'yin Prompt Tavsifi:</label>
                     <textarea id="appPrompt" rows="4" class="w-full bg-slate-950/90 border border-slate-800 rounded-2xl p-3.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="Masalan: Bank xizmatlari va valyuta kursini hisoblovchi ilova yozib ber..."></textarea>
                 </div>
-
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 mt-3 text-xs">
-                    <label class="flex items-center gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800 cursor-pointer"><input type="checkbox" checked class="accent-indigo-500"> Android (.apk)</label>
-                    <label class="flex items-center gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800 cursor-pointer"><input type="checkbox" checked class="accent-indigo-500"> iOS App</label>
-                    <label class="flex items-center gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800 cursor-pointer"><input type="checkbox" checked class="accent-indigo-500"> Web App</label>
-                    <label class="flex items-center gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800 cursor-pointer"><input type="checkbox" checked class="accent-indigo-500"> Windows EXE</label>
-                </div>
             </div>
 
-            <!-- NO-CODE SUBMIT BUTTON & TERMINAL -->
             <div class="space-y-3 pt-2">
                 <button onclick="startAppGeneration()" class="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-600 hover:from-indigo-500 hover:to-emerald-500 text-white font-extrabold py-4 rounded-2xl text-sm flex items-center justify-center gap-2 shadow-2xl transition">
                     <i class="fa-solid fa-rocket"></i> 🚀 Avtonom Ilovani Yaratish (No-Code Submit)
@@ -138,7 +115,7 @@
                     </div>
 
                     <div id="terminalOutput" class="h-32 overflow-y-auto bg-black p-3 rounded-xl font-mono text-[11px] text-emerald-400 border border-slate-900 terminal-scroll">
-                        <p class="text-slate-500">[SYSTEM]: Ulug'bek AI Engine Initialized...</p>
+                        <p class="text-slate-500">[SYSTEM]: Backend Proxy Server Initialized...</p>
                     </div>
 
                     <div id="downloadArea" class="hidden pt-2 border-t border-slate-800 flex gap-2">
@@ -152,91 +129,48 @@
 
     </main>
 
-    <!-- SYSTEM JAVASCRIPT -->
     <script>
-        // SIZ YUBORGAN HAQIQIY GEMINI API KALITI KO'CHIRILDI
-        const SYSTEM_API_KEY = "AQ.Ab8RN6IBmKYdQGq1Fraa3yiPNIEjJBBohAgokd-RsqopZDvSEQ"; 
-
-        let attachedFileData = null;
-
         function loginUser() {
             document.getElementById('authModal').classList.add('hidden');
         }
 
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if(file) {
-                attachedFileData = file.name;
-                document.getElementById('attachedFileName').innerText = "Biriktirildi: " + file.name;
-                document.getElementById('fileNameDisplay').classList.remove('hidden');
-            }
-        }
-
-        function removeAttachedFile() {
-            attachedFileData = null;
-            document.getElementById('fileNameDisplay').classList.add('hidden');
-            document.getElementById('chatFileInput').value = "";
-        }
-
-        // UNIVERSAL API CALL FUNCTION (SUPPORTING NEW GOOGLE API KEY FORMATS)
-        async function callGeminiAPI(promptText) {
-            // URL orqali API kalitni yuborish
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${SYSTEM_API_KEY}`;
-            const payload = { contents: [{ parts: [{ text: promptText }] }] };
-
-            let response = await fetch(url, {
+        // BACKEND AGENT.PY PROXY ORQALI HAVOZA YUBORISH
+        async function callBackendAPI(promptText) {
+            // BACKEND SERVER ENDPOINT (agent.py)
+            const response = await fetch('/generate', {
                 method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${SYSTEM_API_KEY}` // Yangi formatlar uchun qo'shimcha Authorization sarlavhasi
-                },
-                body: JSON.stringify(payload)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: promptText })
             });
 
             return await response.json();
         }
 
-        // CHAT AGENT SERVER REQUEST
         async function sendChatMessage() {
             const input = document.getElementById('userInput');
             let text = input.value.trim();
             const chatBox = document.getElementById('chatBox');
 
-            if(!text && !attachedFileData) return;
+            if(!text) return;
 
-            let displayMsg = text;
-            if(attachedFileData) {
-                displayMsg += ` [Fayl: ${attachedFileData}]`;
-            }
-
-            chatBox.innerHTML += `<div class="bg-slate-900 p-2.5 rounded-xl text-right"><span class="font-bold text-slate-300">Siz:</span> ${displayMsg}</div>`;
+            chatBox.innerHTML += `<div class="bg-slate-900 p-2.5 rounded-xl text-right"><span class="font-bold text-slate-300">Siz:</span> ${text}</div>`;
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            let promptToSend = text;
-            if(attachedFileData) {
-                promptToSend += ` (Fayl biriktirildi: ${attachedFileData})`;
-                removeAttachedFile();
-            }
-
             try {
-                const data = await callGeminiAPI(promptToSend);
-
+                const data = await callBackendAPI(text);
                 if(data.candidates && data.candidates[0]) {
                     const aiReply = data.candidates[0].content.parts[0].text;
                     chatBox.innerHTML += `<div class="bg-indigo-950/50 p-2.5 rounded-xl border border-indigo-500/30 text-slate-200"><span class="font-extrabold text-indigo-300">Ulug'bek AI:</span> ${aiReply}</div>`;
-                } else if(data.error) {
-                    chatBox.innerHTML += `<div class="bg-red-950/60 p-2.5 rounded-xl text-red-300">❌ Server Javobi: ${data.error.message}</div>`;
                 } else {
-                    chatBox.innerHTML += `<div class="bg-red-950/60 p-2.5 rounded-xl text-red-300">❌ Server kutilmagan javob qaytardi.</div>`;
+                    chatBox.innerHTML += `<div class="bg-red-950/60 p-2.5 rounded-xl text-red-300">❌ Server javob bera olmadi.</div>`;
                 }
             } catch(err) {
-                chatBox.innerHTML += `<div class="bg-red-950/60 p-2.5 rounded-xl text-red-300">❌ Serverga ulanishda xatolik yuz berdi.</div>`;
+                chatBox.innerHTML += `<div class="bg-red-950/60 p-2.5 rounded-xl text-red-300">❌ Backend serverga ulanishda xatolik.</div>`;
             }
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // NO-CODE GENERATOR ENGINE
         async function startAppGeneration() {
             const prompt = document.getElementById('appPrompt').value.trim();
             const monitor = document.getElementById('buildMonitor');
@@ -248,16 +182,13 @@
             monitor.classList.remove('hidden');
             downloadArea.classList.add('hidden');
             document.getElementById('buildPercent').innerText = "40%";
-            terminal.innerHTML = `<p class="text-emerald-400">[SYSTEM]: Ulug'bek AI Engine serverga ulanmoqda...</p>`;
+            terminal.innerHTML = `<p class="text-emerald-400">[SYSTEM]: Backend server orqali so'rov yuborilmoqda...</p>`;
 
             try {
-                const data = await callGeminiAPI("O'zbek tilida ushbu ilova uchun to'liq HTML, CSS va JS kodi yozib ber: " + prompt);
-
-                document.getElementById('buildPercent').innerText = "85%";
+                const data = await callBackendAPI("O'zbek tilida ushbu ilova uchun to'liq HTML, CSS va JS kodi yozib ber: " + prompt);
 
                 if(data.candidates && data.candidates[0]) {
                     const generatedCode = data.candidates[0].content.parts[0].text;
-
                     document.getElementById('buildPercent').innerText = "100%";
                     document.getElementById('buildStatus').innerText = "🎉 Muvaffaqiyatli Yaratildi!";
                     terminal.innerText = generatedCode;
@@ -266,14 +197,11 @@
                     document.getElementById('downloadLink').href = URL.createObjectURL(blob);
                     document.getElementById('downloadLink').download = "Ulugbek_AI_App.html";
                     downloadArea.classList.remove('hidden');
-                } else if(data.error) {
-                    terminal.innerHTML += `<p class="text-red-400">[ERROR]: ${data.error.message}</p>`;
-                    document.getElementById('buildStatus').innerText = "❌ AI Xatosi!";
                 } else {
-                    throw new Error("Empty response");
+                    throw new Error("Xatolik");
                 }
             } catch(err) {
-                terminal.innerHTML += `<p class="text-red-400">[ERROR]: Serverga ulanishda xatolik yuz berdi!</p>`;
+                terminal.innerHTML += `<p class="text-red-400">[ERROR]: AI kodi generatsiya qilinmadi.</p>`;
                 document.getElementById('buildStatus').innerText = "❌ Xatolik!";
             }
         }
