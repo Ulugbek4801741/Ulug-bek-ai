@@ -42,11 +42,11 @@
     <!-- MAIN PLATFORM GRID -->
     <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <!-- CHAT AGENT -->
+        <!-- CHAT AGENT WITH VOICE -->
         <section class="glass-panel rounded-3xl p-5 flex flex-col justify-between space-y-4">
             <div>
                 <h2 class="text-base font-extrabold border-b border-slate-800 pb-3 flex items-center justify-between">
-                    <span><i class="fa-solid fa-robot text-emerald-400 mr-2"></i> Ulug'bek AI Chat Agent</span>
+                    <span><i class="fa-solid fa-robot text-emerald-400 mr-2"></i> Ulug'bek AI Agent</span>
                     <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-semibold">ONLINE</span>
                 </h2>
 
@@ -59,13 +59,16 @@
 
                 <div id="chatBox" class="h-48 overflow-y-auto bg-slate-950/90 rounded-2xl p-3 space-y-2 border border-slate-800 text-xs terminal-scroll">
                     <div class="bg-indigo-950/50 p-2.5 rounded-xl border border-indigo-500/30 text-slate-300">
-                        <span class="font-extrabold text-indigo-300">Ulug'bek AI:</span> Salom, Ulug'bek aka! Menga savol yuboring.
+                        <span class="font-extrabold text-indigo-300">Ulug'bek AI:</span> Salom, Ulug'bek aka! Ovozli yoki matnli buyruq bering.
                     </div>
                 </div>
             </div>
 
             <div class="space-y-2 pt-2">
                 <div class="flex gap-2 items-center">
+                    <button onclick="startVoiceRecognition()" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 px-3 py-2.5 rounded-xl text-xs font-bold border border-slate-700 transition" title="Ovozli Kiritish">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
                     <input type="text" id="userInput" placeholder="Xabar yozing..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
                     <button onclick="sendChatMessage()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2.5 rounded-xl text-xs font-bold shadow-md transition">
                         <i class="fa-solid fa-paper-plane"></i>
@@ -74,32 +77,32 @@
             </div>
         </section>
 
-        <!-- NO-CODE APP ENGINE -->
+        <!-- NO-CODE APP ENGINE PRO -->
         <section class="glass-panel rounded-3xl p-5 lg:col-span-2 flex flex-col justify-between space-y-4">
             <div>
                 <h2 class="text-base font-extrabold border-b border-slate-800 pb-3 flex items-center justify-between">
-                    <span><i class="fa-solid fa-wand-magic-sparkles text-indigo-400 mr-2"></i> Ulug'bek AI No-Code App Engine</span>
-                    <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-semibold">Auto-Build</span>
+                    <span><i class="fa-solid fa-wand-magic-sparkles text-indigo-400 mr-2"></i> Enterprise No-Code Generator</span>
+                    <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-semibold">Pro Engine</span>
                 </h2>
 
                 <div class="mt-4 space-y-3">
-                    <label class="block text-xs font-semibold text-slate-300">Ilova yoki O'yin Prompt Tavsifi:</label>
-                    <textarea id="appPrompt" rows="4" class="w-full bg-slate-950/90 border border-slate-800 rounded-2xl p-3.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="Masalan: Valyuta kursini hisoblovchi kalkulyator ilovasi..."></textarea>
+                    <label class="block text-xs font-semibold text-slate-300">Ilova / Admin Panel / Game Prompt:</label>
+                    <textarea id="appPrompt" rows="4" class="w-full bg-slate-950/90 border border-slate-800 rounded-2xl p-3.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="Masalan: Bank xizmatlari uchun to'liq admin panel, valyuta grafikasi va ovozli yordamchi funksiyasi bilan chiroyli ilova yaratib ber..."></textarea>
                 </div>
             </div>
 
             <div class="space-y-3 pt-2">
                 <button onclick="startAppGeneration()" class="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-600 hover:from-indigo-500 hover:to-emerald-500 text-white font-extrabold py-4 rounded-2xl text-sm flex items-center justify-center gap-2 shadow-2xl transition">
-                    <i class="fa-solid fa-rocket"></i> 🚀 Avtonom Ilovani Yaratish (No-Code Submit)
+                    <i class="fa-solid fa-rocket"></i> 🚀 Professional Ilovani Yaratish (No-Code Submit)
                 </button>
 
                 <div id="buildMonitor" class="hidden bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 text-xs">
                     <div class="flex justify-between items-center">
-                        <span id="buildStatus" class="font-bold text-indigo-400">🔍 AI Ishlamoqda...</span>
+                        <span id="buildStatus" class="font-bold text-indigo-400">🔍 AI Enterprise Kod Generatsiya Qilmoqda...</span>
                     </div>
 
-                    <div id="terminalOutput" class="h-32 overflow-y-auto bg-black p-3 rounded-xl font-mono text-[11px] text-emerald-400 border border-slate-900 terminal-scroll">
-                        <p class="text-slate-500">[SYSTEM]: AI Engine ishga tushirildi...</p>
+                    <div id="terminalOutput" class="h-36 overflow-y-auto bg-black p-3 rounded-xl font-mono text-[11px] text-emerald-400 border border-slate-900 terminal-scroll">
+                        <p class="text-slate-500">[SYSTEM]: High-Performance AI Pipeline Loaded...</p>
                     </div>
 
                     <div id="downloadArea" class="hidden pt-2 border-t border-slate-800 flex gap-2">
@@ -114,13 +117,39 @@
     </main>
 
     <script>
+        // AI FETCH FUNCTION
         async function fetchAIResponse(promptText) {
             const url = "https://text.pollinations.ai/";
             const response = await fetch(url + encodeURIComponent(promptText));
-            if(!response.ok) throw new Error("Server xatosi");
+            if(!response.ok) throw new Error("Server Error");
             return await response.text();
         }
 
+        // OVOZLI YORDAMCHI (VOICE RECOGNITION)
+        function startVoiceRecognition() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert("Brauzeringiz ovozli kirishni qo'llab-quvvatlamaydi.");
+                return;
+            }
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'uz-UZ';
+            recognition.start();
+
+            const input = document.getElementById('userInput');
+            input.placeholder = "Eshitilmoqda...";
+
+            recognition.onresult = function(event) {
+                input.value = event.results[0][0].transcript;
+                input.placeholder = "Xabar yozing...";
+            };
+
+            recognition.onerror = function() {
+                input.placeholder = "Xabar yozing...";
+            };
+        }
+
+        // CHAT HANDLER
         async function sendChatMessage() {
             const input = document.getElementById('userInput');
             let text = input.value.trim();
@@ -133,14 +162,15 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                const aiReply = await fetchAIResponse("Javobni o'zbek tilida ber: " + text);
+                const aiReply = await fetchAIResponse("O'zbek tilida professional tarzda javob ber: " + text);
                 chatBox.innerHTML += `<div class="bg-indigo-950/50 p-2.5 rounded-xl border border-indigo-500/30 text-slate-200"><span class="font-extrabold text-indigo-300">Ulug'bek AI:</span> ${aiReply}</div>`;
             } catch(err) {
-                chatBox.innerHTML += `<div class="bg-red-950/60 p-2.5 rounded-xl text-red-300">❌ Ulanishda xatolik yuz berdi.</div>`;
+                chatBox.innerHTML += `<div class="bg-red-950/60 p-2.5 rounded-xl text-red-300">❌ Serverga ulanishda xatolik.</div>`;
             }
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
+        // ADVANCED APP GENERATOR (WITH SYSTEM PROMPT)
         async function startAppGeneration() {
             const prompt = document.getElementById('appPrompt').value.trim();
             const monitor = document.getElementById('buildMonitor');
@@ -151,24 +181,38 @@
 
             monitor.classList.remove('hidden');
             downloadArea.classList.add('hidden');
-            terminal.innerHTML = `<p class="text-emerald-400">[SYSTEM]: AI ilova kodini yaratmoqda, kutib turing...</p>`;
+            terminal.innerHTML = `<p class="text-emerald-400">[SYSTEM]: Enterprise darajadagi dastur kodi generatsiya qilinmoqda...</p>`;
+
+            // SYSTEM PROMPT FOR HIGH QUALITY CODE GENERATION
+            const systemInstructions = `Siz senior full-stack dasturchisiz. Foydalanuvchi talabi bo'yicha to'liq, mukammal va professional bitta faylli HTML ilova yaratib bering.
+            Talablar:
+            1. Tailwind CSS va FontAwesome ilova qilinsin.
+            2. Zamonaviy qorong'i (Dark Glassmorphic) UI dizayn bo'lsin.
+            3. Agar foydalanuvchi Admin Panel va Bank so'ragan bo'lsa: Statistika kartochkalari, mijozlar jadvali, grafiklar, o'tkazmalar tarixi va sozlalar qismi to'liq ishlasin.
+            4. Agar Ovozli Yordamchi so'ralgan bo'lsa, 'webkitSpeechRecognition' orqali ishlaydigan Ovozli Boshqaruv tugmasi va funksiyasi qo'shilsin.
+            5. Faqat va faqat tayyor HTML kodi qaytarilsin. Hech qanday tushuntirish matni yozilmasin!
+
+            Foydalanuvchi so'rovi: `;
 
             try {
-                const generatedCode = await fetchAIResponse("Faqat ishlaydigan va chiroyli HTML, CSS, JS kodini yozib ber. Hech qanday ortiqcha matnsiz: " + prompt);
-                
-                document.getElementById('buildStatus').innerText = "🎉 Muvaffaqiyatli Yaratildi!";
+                let generatedCode = await fetchAIResponse(systemInstructions + prompt);
+
+                // Koddagi ortiqcha markdown (```html ... ```) belgilarini tozalaymiz
+                generatedCode = generatedCode.replace(/```html/g, '').replace(/```/g, '');
+
+                document.getElementById('buildStatus').innerText = "🎉 Mukammal Enterprise Ilova Yaratildi!";
                 terminal.innerText = generatedCode;
 
                 const blob = new Blob([generatedCode], { type: 'text/html' });
                 document.getElementById('downloadLink').href = URL.createObjectURL(blob);
-                document.getElementById('downloadLink').download = "Ulugbek_AI_App.html";
+                document.getElementById('downloadLink').download = "Ulugbek_AI_Enterprise_App.html";
                 downloadArea.classList.remove('hidden');
             } catch(err) {
-                terminal.innerHTML += `<p class="text-red-400">[ERROR]: Kod generatsiya qilinmadi.</p>`;
+                terminal.innerHTML += `<p class="text-red-400">[ERROR]: Kod generatsiyasida xatolik.</p>`;
                 document.getElementById('buildStatus').innerText = "❌ Xatolik!";
             }
         }
     </script>
 </body>
-                                                                      </html>
-    
+    </html>
+                        
