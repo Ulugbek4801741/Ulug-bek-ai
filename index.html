@@ -42,7 +42,7 @@
     <!-- MAIN PLATFORM GRID -->
     <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <!-- CHAT AGENT WITH VOICE -->
+        <!-- CHAT AGENT WITH VOICE & BRAND FILTER -->
         <section class="glass-panel rounded-3xl p-5 flex flex-col justify-between space-y-4">
             <div>
                 <h2 class="text-base font-extrabold border-b border-slate-800 pb-3 flex items-center justify-between">
@@ -59,7 +59,7 @@
 
                 <div id="chatBox" class="h-48 overflow-y-auto bg-slate-950/90 rounded-2xl p-3 space-y-2 border border-slate-800 text-xs terminal-scroll">
                     <div class="bg-indigo-950/50 p-2.5 rounded-xl border border-indigo-500/30 text-slate-300">
-                        <span class="font-extrabold text-indigo-300">Ulug'bek AI:</span> Salom, Ulug'bek aka! Ovozli yoki matnli buyruq bering.
+                        <span class="font-extrabold text-indigo-300">Ulug'bek AI:</span> Salom, Ulug'bek aka! Men Ulug'bek AI kompaniyasining avtonom AI agentiman. Qanday yordam bera olaman?
                     </div>
                 </div>
             </div>
@@ -87,7 +87,7 @@
 
                 <div class="mt-4 space-y-3">
                     <label class="block text-xs font-semibold text-slate-300">Ilova / Admin Panel / Game Prompt:</label>
-                    <textarea id="appPrompt" rows="4" class="w-full bg-slate-950/90 border border-slate-800 rounded-2xl p-3.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="Masalan: Bank xizmatlari uchun to'liq admin panel, valyuta grafikasi va ovozli yordamchi funksiyasi bilan chiroyli ilova yaratib ber..."></textarea>
+                    <textarea id="appPrompt" rows="4" class="w-full bg-slate-950/90 border border-slate-800 rounded-2xl p-3.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="Masalan: Bank xizmatlari uchun to'liq admin panel va ovozli yordamchi ilovasini yaratib ber..."></textarea>
                 </div>
             </div>
 
@@ -102,7 +102,7 @@
                     </div>
 
                     <div id="terminalOutput" class="h-36 overflow-y-auto bg-black p-3 rounded-xl font-mono text-[11px] text-emerald-400 border border-slate-900 terminal-scroll">
-                        <p class="text-slate-500">[SYSTEM]: High-Performance AI Pipeline Loaded...</p>
+                        <p class="text-slate-500">[SYSTEM]: Ulug'bek AI Engine Initialized...</p>
                     </div>
 
                     <div id="downloadArea" class="hidden pt-2 border-t border-slate-800 flex gap-2">
@@ -117,15 +117,24 @@
     </main>
 
     <script>
-        // AI FETCH FUNCTION
+        // AI FETCH FUNCTION WITH BRANDING FILTER
         async function fetchAIResponse(promptText) {
             const url = "https://text.pollinations.ai/";
             const response = await fetch(url + encodeURIComponent(promptText));
             if(!response.ok) throw new Error("Server Error");
-            return await response.text();
+            let text = await response.text();
+
+            // BRENDNING QAT'IY FILTRI (OPENAI, CHATGPT, GOOGLE ATAMALARINI ALSHTIRISH)
+            text = text.replace(/OpenAI/gi, "Ulug'bek AI")
+                       .replace(/ChatGPT/gi, "Ulug'bek AI")
+                       .replace(/Google/gi, "Ulug'bek AI")
+                       .replace(/GPT-3/gi, "Ulug'bek AI Engine")
+                       .replace(/GPT-4/gi, "Ulug'bek AI Engine");
+
+            return text;
         }
 
-        // OVOZLI YORDAMCHI (VOICE RECOGNITION)
+        // OVOZLI YORDAMCHI
         function startVoiceRecognition() {
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
                 alert("Brauzeringiz ovozli kirishni qo'llab-quvvatlamaydi.");
@@ -149,7 +158,7 @@
             };
         }
 
-        // CHAT HANDLER
+        // CHAT HANDLER WITH SYSTEM IDENTITY PROMPT
         async function sendChatMessage() {
             const input = document.getElementById('userInput');
             let text = input.value.trim();
@@ -161,8 +170,10 @@
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
+            const systemIdentityPrompt = `Sening isming Ulug'bek AI. Sen Ulug'bek AI kompaniyasi tomonidan yaratilgan va ishlab chiqilgan avtonom AI chat agentisan. Kim seni yaratganini so'rashsa, faqat va faqat: "Men Ulug'bek AI kompaniyasi tomonidan ishlab chiqilgan AI chat agentiman" deb javob ber. Hech qachon OpenAI, ChatGPT yoki boshqa kompaniya nomini tilga olma. Javobni har doim o'zbek tilida ber. Foydalanuvchi savoli: `;
+
             try {
-                const aiReply = await fetchAIResponse("O'zbek tilida professional tarzda javob ber: " + text);
+                const aiReply = await fetchAIResponse(systemIdentityPrompt + text);
                 chatBox.innerHTML += `<div class="bg-indigo-950/50 p-2.5 rounded-xl border border-indigo-500/30 text-slate-200"><span class="font-extrabold text-indigo-300">Ulug'bek AI:</span> ${aiReply}</div>`;
             } catch(err) {
                 chatBox.innerHTML += `<div class="bg-red-950/60 p-2.5 rounded-xl text-red-300">❌ Serverga ulanishda xatolik.</div>`;
@@ -170,7 +181,7 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // ADVANCED APP GENERATOR (WITH SYSTEM PROMPT)
+        // ADVANCED NO-CODE ENGINE
         async function startAppGeneration() {
             const prompt = document.getElementById('appPrompt').value.trim();
             const monitor = document.getElementById('buildMonitor');
@@ -181,23 +192,19 @@
 
             monitor.classList.remove('hidden');
             downloadArea.classList.add('hidden');
-            terminal.innerHTML = `<p class="text-emerald-400">[SYSTEM]: Enterprise darajadagi dastur kodi generatsiya qilinmoqda...</p>`;
+            terminal.innerHTML = `<p class="text-emerald-400">[SYSTEM]: Ulug'bek AI Enterprise kodi generatsiya qilinmoqda...</p>`;
 
-            // SYSTEM PROMPT FOR HIGH QUALITY CODE GENERATION
-            const systemInstructions = `Siz senior full-stack dasturchisiz. Foydalanuvchi talabi bo'yicha to'liq, mukammal va professional bitta faylli HTML ilova yaratib bering.
+            const systemInstructions = `Siz Ulug'bek AI platformasining Senior Full-Stack dasturchisiz. Foydalanuvchi talabi bo'yicha to'liq, mukammal va professional bitta faylli HTML ilova yaratib bering.
             Talablar:
             1. Tailwind CSS va FontAwesome ilova qilinsin.
             2. Zamonaviy qorong'i (Dark Glassmorphic) UI dizayn bo'lsin.
-            3. Agar foydalanuvchi Admin Panel va Bank so'ragan bo'lsa: Statistika kartochkalari, mijozlar jadvali, grafiklar, o'tkazmalar tarixi va sozlalar qismi to'liq ishlasin.
-            4. Agar Ovozli Yordamchi so'ralgan bo'lsa, 'webkitSpeechRecognition' orqali ishlaydigan Ovozli Boshqaruv tugmasi va funksiyasi qo'shilsin.
-            5. Faqat va faqat tayyor HTML kodi qaytarilsin. Hech qanday tushuntirish matni yozilmasin!
+            3. Admin Panel, Bank va Ovozli Yordamchi kabi barcha interaktiv mantiq to'liq ishlasin.
+            4. Faqat va faqat tayyor HTML kodi qaytarilsin. Hech qanday ortiqcha matnsiz.
 
             Foydalanuvchi so'rovi: `;
 
             try {
                 let generatedCode = await fetchAIResponse(systemInstructions + prompt);
-
-                // Koddagi ortiqcha markdown (```html ... ```) belgilarini tozalaymiz
                 generatedCode = generatedCode.replace(/```html/g, '').replace(/```/g, '');
 
                 document.getElementById('buildStatus').innerText = "🎉 Mukammal Enterprise Ilova Yaratildi!";
@@ -215,4 +222,4 @@
     </script>
 </body>
     </html>
-                        
+                            
