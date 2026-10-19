@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ulug'bek AI - Global Autonomous No-Code OS (8B Scale)</title>
+    <title>Ulug'bek AI - Global Multi-Agent Cloud OS</title>
 
     <!-- Tailwind CSS & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
         * { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
 
         body {
             background-color: #030712;
@@ -32,6 +33,7 @@
             border: 1px solid rgba(99, 102, 241, 0.25);
         }
 
+        /* Avatar Lip-Sync Glow */
         .avatar-box {
             box-shadow: 0 0 25px rgba(99, 102, 241, 0.35);
             transition: all 0.3s ease;
@@ -46,14 +48,48 @@
             100% { transform: scale(1.05); }
         }
 
+        /* Slide-down Android SMS Push Notification */
+        .sms-push-anim {
+            animation: slideDownPush 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes slideDownPush {
+            0% { transform: translateY(-120%); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
         .scroll-smooth-y::-webkit-scrollbar { width: 4px; }
         .scroll-smooth-y::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-    <!-- 1. AUTHENTICATION MODAL (QOTMAYDIGAN TEZKOR TIZIM) -->
-    <div id="authModal" style="display: flex;" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl items-center justify-center p-4">
+    <!-- 0. REALISTIK ANDROID / CLOUD SMS PUSH NOTIFICATION -->
+    <div id="smsNotificationToast" style="display: none;" class="fixed top-3 left-3 right-3 z-50 max-w-md mx-auto bg-slate-900/95 border-2 border-emerald-500/80 shadow-[0_10px_35px_rgba(16,185,129,0.3)] rounded-2xl p-3.5 sms-push-anim backdrop-blur-xl">
+        <div class="flex items-start justify-between gap-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-indigo-600 flex items-center justify-center text-white flex-shrink-0 shadow">
+                <i class="fa-solid fa-comment-sms text-lg"></i>
+            </div>
+            <div class="flex-1">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-emerald-400">Ulug'bek AI Cloud Gateway</span>
+                    <span class="text-[10px] text-slate-400">Hozir</span>
+                </div>
+                <p class="text-xs text-white mt-0.5">Tasdiqlash kodi: <strong id="pushCodeValue" class="text-emerald-300 font-mono text-sm tracking-wider bg-black/40 px-1.5 py-0.5 rounded">------</strong></p>
+                <div class="flex gap-2 mt-2">
+                    <button type="button" onclick="autoFillAndSubmitCode()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold py-1.5 px-3 rounded-lg transition active:scale-95 flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-bolt"></i> Avtomatik Kiritish
+                    </button>
+                    <button type="button" onclick="copyPushCode()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold py-1.5 px-3 rounded-lg transition active:scale-95">
+                        <i class="fa-solid fa-copy"></i> Nusxalash
+                    </button>
+                </div>
+            </div>
+            <button type="button" onclick="document.getElementById('smsNotificationToast').style.display='none'" class="text-slate-400 hover:text-white text-xs p-1">✕</button>
+        </div>
+    </div>
+
+    <!-- 1. AUTHENTICATION MODAL (3 DAQIQA TAYMER & 5 XATO QULFLASH) -->
+    <div id="authModal" style="display: flex;" class="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl items-center justify-center p-4">
         <div class="gemini-card w-full max-w-md rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl relative">
             <div class="text-center space-y-2">
                 <div class="w-14 h-14 bg-gradient-to-tr from-emerald-400 via-indigo-500 to-purple-600 rounded-2xl mx-auto flex items-center justify-center text-white text-2xl shadow-lg">
@@ -62,9 +98,10 @@
                 <h2 class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-indigo-400">
                     Ulug'bek AI Gateway
                 </h2>
-                <p class="text-xs text-slate-400">8 Milyard Aholi Uchun Avtonom No-Code & APK Generator</p>
+                <p class="text-xs text-slate-400">8 Milyard Aholi Uchun Avtonom No-Code & APK Platformasi</p>
             </div>
 
+            <!-- TABS -->
             <div class="flex bg-slate-900 p-1 rounded-2xl border border-slate-800 text-xs">
                 <button type="button" onclick="setAuthTab('phone')" id="tabBtnPhone" class="flex-1 py-2.5 rounded-xl bg-indigo-600 text-white font-bold transition">
                     <i class="fa-solid fa-phone mr-1"></i> Telefon
@@ -74,6 +111,7 @@
                 </button>
             </div>
 
+            <!-- PHONE FORM -->
             <div id="phoneAuthForm" class="space-y-4">
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">Telefon raqamingiz (+998):</label>
@@ -83,15 +121,33 @@
                     </div>
                 </div>
 
-                <div id="otpInputGroup" style="display: none;" class="space-y-2 p-3 bg-slate-900/90 rounded-2xl border border-emerald-500/40">
+                <!-- OTP & TIMER & FAILED ATTEMPTS MONITOR -->
+                <div id="otpInputGroup" style="display: none;" class="space-y-3 p-3.5 bg-slate-900/90 rounded-2xl border border-emerald-500/40">
                     <div class="flex justify-between items-center text-xs">
-                        <span class="text-emerald-400 font-bold"><i class="fa-solid fa-envelope mr-1"></i> SMS Kod:</span>
-                        <span class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-mono font-bold">7777</span>
+                        <span class="text-emerald-400 font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-shield-halved"></i> Tasdiqlash Kodi:
+                        </span>
+                        <!-- 3 MINUTE TIMER -->
+                        <span id="otpTimerDisplay" class="bg-indigo-950 border border-indigo-500/40 text-indigo-300 font-mono font-bold px-2 py-0.5 rounded text-[11px]">
+                            ⏱ 03:00
+                        </span>
                     </div>
-                    <input type="text" id="smsOtpCode" placeholder="7777" maxlength="4" class="w-full bg-slate-950 border border-emerald-500 rounded-xl px-3 py-2.5 text-center text-xl tracking-widest text-emerald-300 font-bold outline-none">
-                    <button type="button" onclick="document.getElementById('smsOtpCode').value='7777'; handlePhoneAuthStep();" class="w-full py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-[11px] rounded-lg font-bold transition">
-                        ⚡ 7777 kodini tasdiqlab kirish
-                    </button>
+
+                    <div class="relative">
+                        <input type="text" id="smsOtpCode" placeholder="Kodni kiriting..." maxlength="9" class="w-full bg-slate-950 border border-emerald-500 rounded-xl px-3 py-3 text-center text-lg tracking-widest text-emerald-300 font-mono font-bold outline-none" oninput="checkCodeAutoSubmit(this.value)">
+                    </div>
+
+                    <div class="flex items-center justify-between text-[11px] text-slate-400">
+                        <span>Xatolik imkoniyati: <strong id="attemptsLeftDisplay" class="text-amber-400">5/5</strong></span>
+                        <button type="button" onclick="pasteClipboardToOTP()" class="text-indigo-400 hover:text-indigo-300 font-bold underline">
+                            Nusxani qo'yish
+                        </button>
+                    </div>
+
+                    <!-- SECURITY LOCK ALERT -->
+                    <div id="lockoutAlert" style="display: none;" class="p-2.5 bg-rose-950/80 border border-rose-500 rounded-xl text-center text-rose-300 text-xs font-bold">
+                        ⛔ 5 marta xato kiritildi! Tizim 15 daqiqaga qulflangan.
+                    </div>
                 </div>
 
                 <button type="button" onclick="handlePhoneAuthStep()" id="phoneSubmitBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs font-black py-3.5 rounded-xl transition shadow-lg flex items-center justify-center gap-2">
@@ -99,23 +155,36 @@
                 </button>
             </div>
 
+            <!-- GOOGLE FORM (GOOGLE ACCOUNT PICKER MODAL) -->
             <div id="googleAuthForm" style="display: none;" class="space-y-4">
-                <p class="text-xs text-slate-400 text-center">Google hisobingiz orqali 1-bosishda kiring:</p>
-                <button type="button" onclick="loginDone('google.user@gmail.com')" class="w-full bg-white hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-xs py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg">
-                    <i class="fa-brands fa-google text-rose-500 text-base"></i> Google orqali kirish
-                </button>
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3 text-center space-y-3">
+                    <p class="text-xs text-slate-300">Google hisobingiz orqali 1-bosishda kiring:</p>
+                    <div class="p-2.5 bg-slate-900 hover:bg-slate-850 rounded-xl border border-slate-800 flex items-center gap-3 cursor-pointer transition active:scale-95" onclick="executeGoogleFastLogin('Ulug\'bek Raxmatullayev', 'ulugbek.ai.developer@gmail.com')">
+                        <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-xs">U</div>
+                        <div class="text-left flex-1">
+                            <p class="text-xs font-bold text-white">Ulug'bek Raxmatullayev</p>
+                            <p class="text-[10px] text-slate-400">ulugbek.ai.developer@gmail.com</p>
+                        </div>
+                        <i class="fa-brands fa-google text-rose-500"></i>
+                    </div>
+
+                    <button type="button" onclick="executeGoogleFastLogin('Foydalanuvchi', 'user.global.8b@gmail.com')" class="w-full bg-white hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-xs py-3 rounded-xl transition flex items-center justify-center gap-2 shadow">
+                        <i class="fa-brands fa-google text-rose-500 text-sm"></i> Boshqa Google hisob bilan kirish
+                    </button>
+                </div>
             </div>
 
+            <!-- GUEST BYPASS -->
             <div class="pt-2 border-t border-slate-800 text-center">
-                <button type="button" onclick="loginDone('Mehmon')" class="text-xs text-slate-400 hover:text-indigo-400 transition underline py-2">
+                <button type="button" onclick="loginDone('Mehmon')" class="text-xs text-slate-400 hover:text-indigo-400 transition underline py-1">
                     Sinov rejimi (Mehmon sifatida)
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- 2. TOP HEADER (ADMIN PANEL TUGMASI KO'RINMAYDI) -->
-    <header class="gemini-glass sticky top-0 z-40 p-3 sm:p-4 border-b border-slate-800">
+    <!-- 2. TOP HEADER (ADMIN PANEL TUGMASI BUTUNLAY YO'QOTILGAN) -->
+    <header class="gemini-glass sticky top-0 z-30 p-3 sm:p-4 border-b border-slate-800">
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
             
             <div class="flex items-center gap-2.5">
@@ -128,7 +197,7 @@
                     </h1>
                     <div class="flex items-center gap-1.5 text-[10px] text-slate-400">
                         <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping"></span>
-                        <span id="brainSyncBadge">9 Agent: 8 Milyard Aholi Uchin APK Builder Faol</span>
+                        <span id="brainSyncBadge">9 Agent: 8 Milyard Aholi Uchun Faol</span>
                     </div>
                 </div>
             </div>
@@ -148,9 +217,9 @@
     </header>
 
     <!-- 3. MOBILE NAVIGATION BOTTOM BAR -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 gemini-glass border-t border-slate-800 px-3 py-2 flex justify-around md:hidden">
+    <nav class="fixed bottom-0 left-0 right-0 z-30 gemini-glass border-t border-slate-800 px-3 py-2 flex justify-around md:hidden">
         <button type="button" onclick="setActiveMobileTab('studio')" id="mobTabStudio" class="flex flex-col items-center text-indigo-400 font-bold text-[10px]">
-            <i class="fa-solid fa-wand-magic-sparkles text-base mb-0.5"></i> APK & App Generator
+            <i class="fa-solid fa-wand-magic-sparkles text-base mb-0.5"></i> APK Generator
         </button>
         <button type="button" onclick="setActiveMobileTab('chat')" id="mobTabChat" class="flex flex-col items-center text-slate-400 font-medium text-[10px]">
             <i class="fa-solid fa-robot text-base mb-0.5"></i> Ovozli Menejer
@@ -163,7 +232,7 @@
     <!-- 4. MAIN MULTI-AGENT WORKSPACE -->
     <main class="max-w-7xl mx-auto w-full p-3 sm:p-5 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-5 pb-20 md:pb-6">
 
-        <!-- LEFT PANEL: NO-CODE APK GENERATOR (ASOSIY OYNA - 7 cols) -->
+        <!-- LEFT PANEL: NO-CODE APK GENERATOR (7 cols) -->
         <section id="sectionStudio" class="lg:col-span-7 gemini-card rounded-3xl p-4 sm:p-5 flex flex-col justify-between space-y-4">
             <div>
                 <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-800 pb-3">
@@ -190,13 +259,12 @@
                 <!-- USER INTENT INPUT -->
                 <div class="mt-3">
                     <label class="block text-xs font-bold text-slate-300 mb-1">
-                        Ilovangiz nima vazifa bajarishi kerak? (Ovoz yoki matn bilan ayting):
+                        Ilovangiz nima vazifa bajarishi kerak? (Ovoz yoki matn orqali buyruq bering):
                     </label>
                     <textarea id="projectPromptInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3 text-xs text-white outline-none focus:border-indigo-500 scroll-smooth-y resize-none font-medium" 
                         placeholder="Masalan: 'Dorixona va dori buyurtma qilish ilovasi' yoki 'Bolalar uchun interaktiv o'yin' yoki 'Restoran kassa tizimi'..." oninput="updateAppTargetTitle()"></textarea>
                 </div>
 
-                <!-- BUILD BUTTON -->
                 <div class="flex flex-wrap gap-2 mt-2">
                     <button type="button" onclick="startFullAppAndApkBuild()" id="buildMainBtn" class="flex-1 bg-gradient-to-r from-emerald-500 via-indigo-600 to-purple-600 hover:opacity-90 active:scale-95 text-white font-black py-4 rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-2xl transition">
                         <i class="fa-solid fa-rocket text-base"></i> 🚀 Tayyor Ilova va APK Yuklab Olish Havolasini Yaratish
@@ -206,7 +274,6 @@
 
             <!-- RESULT AREA: DOWNLOAD LINKS & DIRECT INSTALLATION -->
             <div id="buildOutputSection" class="mt-3 bg-slate-950/90 rounded-2xl border border-slate-800 p-4 space-y-4">
-                
                 <div class="flex justify-between items-center border-b border-slate-800/80 pb-2.5">
                     <div>
                         <span class="text-[10px] uppercase tracking-wider text-emerald-400 font-bold flex items-center gap-1.5">
@@ -222,9 +289,7 @@
                     </span>
                 </div>
 
-                <!-- DOWNLOAD BUTTONS -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <!-- DIRECT APK DOWNLOAD -->
                     <a id="apkDirectDownloadBtn" href="#" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white p-3.5 rounded-xl font-black text-xs flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-600/20 transition">
                         <i class="fa-brands fa-android text-lg"></i>
                         <div class="text-left">
@@ -233,7 +298,6 @@
                         </div>
                     </a>
 
-                    <!-- DIRECT WEB/PWA RUNNER -->
                     <button type="button" onclick="openFullscreenApp()" class="bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white p-3.5 rounded-xl font-black text-xs flex items-center justify-center gap-2.5 shadow-lg shadow-indigo-600/20 transition">
                         <i class="fa-solid fa-mobile-screen-button text-lg"></i>
                         <div class="text-left">
@@ -243,67 +307,5 @@
                     </button>
                 </div>
 
-                <!-- LIVE PREVIEW BOX -->
                 <div class="space-y-1">
-                    <p class="text-[11px] text-slate-400 font-semibold flex items-center gap-1">
-                        <i class="fa-solid fa-eye text-indigo-400"></i> Jonli Ishlayotgan Namunasi (Live Test):
-                    </p>
-                    <div class="h-64 bg-slate-900 rounded-xl overflow-hidden border border-slate-800">
-                        <iframe id="liveAppFrame" class="w-full h-full border-0"></iframe>
-                    </div>
-                </div>
-
-                <!-- SHARING LINK & QR -->
-                <div class="flex items-center justify-between p-2.5 bg-slate-900/80 rounded-xl border border-slate-800 text-xs">
-                    <div class="truncate mr-2">
-                        <span class="text-[10px] text-slate-400 block">Yuklab olish havolasi (8 mlrd aholi uchun ochiq):</span>
-                        <span id="shareableAppLink" class="text-indigo-400 font-mono font-bold select-all">https://ulugbekai.os/download/app_778.apk</span>
-                    </div>
-                    <button type="button" onclick="copyShareLink()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition flex-shrink-0">
-                        <i class="fa-solid fa-copy mr-1"></i> Havoladan nusxa
-                    </button>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- RIGHT PANEL: ULUG'BEK AI OVOZLI CHAT VA MENEJER (5 cols) -->
-        <section id="sectionChat" class="lg:col-span-5 gemini-card rounded-3xl p-4 flex flex-col justify-between space-y-3 min-h-[520px]">
-            <div>
-                <!-- AVATAR & AUDIO PULSE -->
-                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <div class="flex items-center gap-3">
-                        <div id="avatarHalo" class="relative w-12 h-12 rounded-full border-2 border-indigo-500 p-0.5 avatar-box">
-                            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=150&auto=format&fit=crop" 
-                                 alt="Avatar" class="w-full h-full rounded-full object-cover">
-                            <span id="voicePulseIndicator" style="display: none;" class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-slate-900 rounded-full animate-ping"></span>
-                        </div>
-                        <div>
-                            <h2 class="text-xs font-black text-white flex items-center gap-1.5">
-                                Ulug'bek AI Ovozli Boshliq Agent
-                            </h2>
-                            <p id="agentAudioStatus" class="text-[10px] text-emerald-400 font-semibold">
-                                ● 9 agent internetdan o'rganmoqda
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-1.5">
-                        <button type="button" onclick="toggleVoiceOutput()" id="ttsToggleBtn" class="bg-slate-900 border border-slate-800 p-2 rounded-xl text-xs text-emerald-400" title="Ovozni yoqish/o'chirish">
-                            <i class="fa-solid fa-volume-high"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- CHAT MESSAGES -->
-                <div id="chatScrollArea" class="h-64 sm:h-72 overflow-y-auto mt-3 space-y-2.5 pr-1 text-xs scroll-smooth-y">
-                    <div class="bg-indigo-950/40 border border-indigo-500/20 p-3 rounded-2xl text-slate-200">
-                        <span class="font-extrabold text-indigo-300">Ulug'bek AI:</span> Salom! Men bilan gaplashishingiz yoki ilovangiz g'oyasini aytishingiz mumkin. Men orqa fonda 9 ta yordamchi agentlarim orqali internetdan o'rganib, sizga <strong>tayyor Android APK faylini yuklab olish havolasi bilan</strong> yaratib beraman!
-                    </div>
-                </div>
-            </div>
-
-            <!-- CHAT INPUT (MAXFIY PAROL SHU YERGA YOZILADI) -->
-            <div class="space-y-2 pt-2 border-t border-slate-800">
-                <div class="flex items-center gap-1.5 bg-slate-950 border border-slate-800 rounded-2xl p-1.5 focus-within:border-indigo-500">
-                    <button type="button" id="micActiveBtn" onclick="toggleSpeechRecognition()" class="p-2 text-emerald-400 hover:
+                    <p class="text-[11px] 
