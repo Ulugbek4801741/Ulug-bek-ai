@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-white p-5">
+<div class="max-w-5xl mx-auto">
+<div id="loginBox" class="max-w-sm mx-auto bg-slate-900 p-7 rounded-3xl border border-slate-800">
+<h1 class="text-xl font-black mb-4">Kirish</h1>
+<input id="password" type="password" placeholder="Parol" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 mb-3">
+<button onclick="login()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold">Kirish</button>
+<p id="error" class="text-red-400 text-sm mt-3"></p>
+</div>
+
+<div id="panel" class="hidden space-y-6">
+<div class="flex justify-between items-center">
+<h1 class="text-2xl font-black">Boshqaruv paneli</h1>
+<button onclick="logout()" class="bg-slate-800 px-4 py-2 rounded-xl text-sm">Chiqish</button>
+</div>
+
+<div class="bg-slate-900 p-6 rounded-3xl border border-slate-800">
+<h2 class="font-bold mb-4">Yangi bilim qo‘shish</h2>
+<input id="title" placeholder="Sarlavha" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 mb-3">
+<textarea id="content" rows="6" placeholder="AI qoidasi, mahsulot ma’lumoti yoki javob uslubi..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 mb-3"></textarea>
+<button onclick="addKnowledge()" class="bg-emerald-600 px-6 py-3 rounded-xl font-bold">Saqlash</button>
+</div>
+
+<div class="bg-slate-900 p-6 rounded-3xl border border-slate-800">
+<h2 class="font-bold mb-4">Bilimlar</h2>
+<div id="knowledgeList" class="space-y-3"></div>
+</div>
+
+<div class="bg-slate-900 p-6 rounded-3xl border border-slate-800">
+<div class="flex justify-between items-center mb-4">
+<h2 class="font-bold">Ma’lumot zaxirasi</h2>
+<button onclick="createBackup()" class="bg-indigo-600 px-4 py-2 rounded-xl text-sm font-bold">Zaxira olish</button>
+</div>
+<p id="backupStatus" class="text-sm text-emerald-400"></p>
+</div>
+
+<div class="bg-slate-900 p-6 rounded-3xl border border-slate-800">
+<h2 class="font-bold mb-4">Oxirgi suhbatlar</h2>
+<div id="chatList" class="space-y-3 text-sm"></div>
+</div>
+</div>
+</div>
+
+<script>
+async function login() {
+const password = document.getElementById("password").value;
+const response = await fetch("/api/admin/login", {
+method: "POST",
+headers: {"Content-Type":"application/json"},
+body: JSON.stringify({password})
+});
+const data = await response.json();
+
+if(data.error) {
+document.getElementById("error").innerText = data.error;
+return;
+}
+
+document.getElementById("loginBox").classList.add("hidden");
+document.getElementById("panel").classList.remove("hidden");
+loadData();
+}
+
+async function logout() {
+await fetch("/api/admin/logout", {method:"POST"});
+location.reload();
+}
+
+async function addKnowledge() {
+const title = document.getElementById("title").value;
+const content = document.getElementById("content").value;
+
+const response = await fetch("/api/admin/knowledge", {
+method: "POST",
+headers: {"Content-Type":"application/json"},
+body: JSON.stringify({title, content})
+});
+const data = await response.json();
+
+if(data.error) {
+alert(data.error);
+return;
+}
+
+document.getElementById("title").value = "";
+document.getElementById("content").value = "";
+loadData();
+}
+
+async function deleteKnowledge(id) {
+await fetch(`/api/admin/knowledge/${id}`, {method:"DELETE"});
+loadData();
+}
+
+async function createBackup() {
+const response = await fetch("/api/admin/backup", {method:"POST"});
+const data = await response.json();
+document.getElementById("backupStatus").innerText = data.backup ? "Zaxira yaratildi: " + data.backup : data.error;
+}
+
+async function loadData() {
+const knowledge = await (await fetch("/api/admin/knowledge")).json();
+const chats = await (await fetch("/api/admin/chats")).json();
+
+document.getElementById("knowledgeList").innerHTML = knowledge.map(item => `
+<div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+<b>${item.title}</b>
+<p class="text-slate-400 text-sm mt-1">${item.content}</p>
+<button onclick="deleteKnowledge(${item.id})" class="mt-3 text-xs bg-red-600/20 text-red-300 px-3 py-1.5 rounded-lg">O‘chirish</button>
+</div>
+`).join("");
+
+document.getElementById("chatList").innerHTML = chats.map(item => `
+<div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+<b>Savol:</b> ${item.question}<br>
+<b>Javob:</b> ${item.answer}<br>
+<b>AI:</b> ${item.provider || "aniqlanmagan"}<br>
+<b>Baho:</b> ${item.rating || "baholanmagan"}
+</div>
+`).join("");
+}
+</script>
+</body>
+</html>

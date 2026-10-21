@@ -3,67 +3,89 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ulug'bek AI — Ovozli AI Platforma</title>
+<title>Ulug'bek AI — Professional AI Agent</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-body { background:#050811; color:#f8fafc; font-family:system-ui,sans-serif; }
-.glass { background:rgba(13,19,33,.85); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,.08); }
-.avatar { width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#0b1120;border:4px solid #6366f1;animation:pulse 2s infinite alternate; }
-@keyframes pulse { from { box-shadow:0 0 15px rgba(99,102,241,.4); transform:scale(1); } to { box-shadow:0 0 40px rgba(16,185,129,.8); transform:scale(1.06); } }
-.speaking { border-color:#10b981; animation:talk .35s infinite alternate; }
-@keyframes talk { from { transform:scale(1); } to { transform:scale(1.08); } }
-.listening { border-color:#f59e0b; }
-.scroll::-webkit-scrollbar { width:5px; }
+body { background:#030712; color:#f8fafc; font-family:Inter,system-ui,sans-serif; }
+.glass { background:rgba(15,23,42,.72); backdrop-filter:blur(24px); border:1px solid rgba(148,163,184,.14); }
+.glow { background:radial-gradient(circle at 20% 20%, rgba(99,102,241,.25), transparent 45%), radial-gradient(circle at 80% 10%, rgba(16,185,129,.18), transparent 40%), radial-gradient(circle at 50% 90%, rgba(168,85,247,.20), transparent 45%); }
+.avatar { width:150px;height:150px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:conic-gradient(from 180deg,#6366f1,#10b981,#a855f7,#6366f1);animation:rotate 8s linear infinite; }
+.avatar-inner { width:126px;height:126px;border-radius:50%;background:#020617;display:flex;align-items:center;justify-content:center; }
+@keyframes rotate { to { transform:rotate(360deg); } }
+.speaking .avatar-inner { animation:talk .35s infinite alternate; border:3px solid #10b981; }
+@keyframes talk { from { transform:scale(1); } to { transform:scale(1.07); } }
+.listening { box-shadow:0 0 0 6px rgba(245,158,11,.25); }
+.scroll::-webkit-scrollbar { width:6px; }
 .scroll::-webkit-scrollbar-thumb { background:#10b981; border-radius:10px; }
 </style>
 </head>
-<body class="min-h-screen p-4 pb-24">
+<body class="min-h-screen glow p-4 pb-24">
 
 <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4">
-<div class="glass max-w-sm w-full rounded-3xl p-7 text-center">
-<h1 class="text-3xl font-black bg-gradient-to-r from-emerald-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">Ulug'bek AI</h1>
-<p class="text-sm text-slate-400 mt-2">Google akkauntingiz bilan kiring va ovozli AI yordamchidan foydalaning.</p>
-<div id="googleButton" class="mt-6 flex justify-center"></div>
+<div class="glass max-w-md w-full rounded-[2rem] p-8 text-center shadow-2xl">
+<div class="mx-auto mb-5 w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center">
+<i class="fa-solid fa-bolt text-2xl"></i>
+</div>
+<h1 class="text-4xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">Ulug'bek AI</h1>
+<p class="text-slate-400 mt-3">Professional ovozli AI agent va No-Code mahsulot studiyasi</p>
+<div id="googleButton" class="mt-7 flex justify-center"></div>
 </div>
 </div>
 
-<header class="glass max-w-6xl mx-auto rounded-3xl p-5 mb-5 flex items-center justify-between">
+<header class="glass max-w-7xl mx-auto rounded-[2rem] p-5 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center">
+<i class="fa-solid fa-bolt"></i>
+</div>
 <div>
-<h1 class="text-xl md:text-3xl font-black bg-gradient-to-r from-emerald-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">Ulug'bek AI</h1>
-<p class="text-xs text-slate-400">Ovozli AI yordamchi va No-Code ilova generatori</p>
+<h1 class="text-2xl font-black bg-gradient-to-r from-emerald-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">Ulug'bek AI</h1>
+<p class="text-xs text-slate-400">Professional AI Agent Platform</p>
+</div>
 </div>
 <div id="profile" class="hidden flex items-center gap-3">
-<img id="userPhoto" class="w-10 h-10 rounded-full border border-indigo-500" alt="">
-<span id="userName" class="text-sm font-bold"></span>
+<img id="userPhoto" class="w-11 h-11 rounded-full border border-indigo-500" alt="">
+<div>
+<p id="userName" class="text-sm font-bold"></p>
+<p id="userEmail" class="text-[11px] text-slate-400"></p>
+</div>
+<button onclick="logout()" class="ml-2 text-xs bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-xl">Chiqish</button>
 </div>
 </header>
 
-<main class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-5">
+<main class="max-w-7xl mx-auto grid lg:grid-cols-5 gap-6">
 
-<section class="glass rounded-3xl p-5">
-<h2 class="font-black mb-4"><i class="fa-solid fa-robot text-emerald-400 mr-2"></i>Ovozli AI Suhbat</h2>
-<div class="flex flex-col items-center">
-<div id="avatar" class="avatar"><i id="avatarIcon" class="fa-solid fa-brain text-4xl text-emerald-400"></i></div>
-<p id="avatarStatus" class="text-xs text-slate-300 mt-3 font-bold">Tayyor</p>
+<section class="glass rounded-[2rem] p-6 lg:col-span-3">
+<div class="flex items-center justify-between mb-5">
+<h2 class="text-lg font-black"><i class="fa-solid fa-robot text-emerald-400 mr-2"></i>Ovozli AI Agent</h2>
+<span id="providerBadge" class="text-[11px] bg-emerald-500/15 text-emerald-300 px-3 py-1 rounded-full font-bold">AUTO FAILOVER</span>
 </div>
-<div id="chat" class="h-64 overflow-y-auto mt-4 p-3 bg-slate-950 rounded-2xl border border-slate-800 text-sm space-y-3 scroll"></div>
-<div class="flex gap-2 mt-4">
-<input id="message" placeholder="Savol yozing yoki mikrofonni bosing..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm">
-<button onclick="sendMessage()" class="bg-indigo-600 hover:bg-indigo-500 px-4 rounded-xl"><i class="fa-solid fa-paper-plane"></i></button>
-<button id="micButton" onclick="toggleListening()" class="bg-emerald-600 hover:bg-emerald-500 px-4 rounded-xl"><i class="fa-solid fa-microphone"></i></button>
+
+<div class="flex flex-col items-center">
+<div id="avatar" class="avatar">
+<div class="avatar-inner"><i class="fa-solid fa-brain text-5xl text-emerald-400"></i></div>
+</div>
+<p id="avatarStatus" class="mt-4 text-sm font-bold text-slate-300">Tayyor</p>
+</div>
+
+<div id="chat" class="h-80 overflow-y-auto mt-6 p-4 bg-slate-950/80 rounded-2xl border border-slate-800 text-sm space-y-4 scroll"></div>
+
+<div class="flex gap-3 mt-5">
+<input id="message" placeholder="Savol yozing yoki mikrofonni bosing..." class="flex-1 bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-sm">
+<button onclick="sendMessage()" class="bg-indigo-600 hover:bg-indigo-500 px-5 rounded-2xl"><i class="fa-solid fa-paper-plane"></i></button>
+<button onclick="toggleListening()" class="bg-emerald-600 hover:bg-emerald-500 px-5 rounded-2xl"><i class="fa-solid fa-microphone"></i></button>
 </div>
 </section>
 
-<section class="glass rounded-3xl p-5">
-<h2 class="font-black mb-4"><i class="fa-solid fa-wand-magic-sparkles text-indigo-400 mr-2"></i>No-Code Ilova Yaratish</h2>
-<textarea id="appPrompt" rows="6" placeholder="Masalan: Valyuta kursini hisoblovchi chiroyli mobil ilova yoz..." class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-sm"></textarea>
-<button onclick="generateApp()" class="w-full mt-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-600 py-4 rounded-2xl font-black">🚀 Ilovani yaratish</button>
+<section class="glass rounded-[2rem] p-6 lg:col-span-2">
+<h2 class="text-lg font-black mb-5"><i class="fa-solid fa-wand-magic-sparkles text-indigo-400 mr-2"></i>No-Code Mahsulot Studiyasi</h2>
+<textarea id="appPrompt" rows="8" placeholder="Masalan: Valyuta kursi, ob-havo va yangiliklarni ko‘rsatuvchi professional mobil ilova yoz..." class="w-full bg-slate-950/80 border border-slate-800 rounded-2xl p-4 text-sm"></textarea>
+<button onclick="generateApp()" class="w-full mt-5 bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-600 py-4 rounded-2xl font-black shadow-xl">🚀 Professional ilovani yaratish</button>
 <div id="buildStatus" class="hidden mt-4 text-sm text-emerald-400 font-bold"></div>
-<div id="codeArea" class="hidden mt-4">
-<textarea id="generatedCode" rows="8" class="w-full bg-black text-emerald-400 text-xs p-3 rounded-xl border border-slate-800"></textarea>
-<a id="downloadLink" class="block text-center mt-3 bg-emerald-600 py-3 rounded-xl font-bold" download="Ulugbek_AI_App.html">📲 HTML ilovani yuklab olish</a>
+<div id="codeArea" class="hidden mt-5">
+<textarea id="generatedCode" rows="9" class="w-full bg-black text-emerald-400 text-xs p-4 rounded-2xl border border-slate-800"></textarea>
+<a id="downloadLink" class="block text-center mt-4 bg-emerald-600 hover:bg-emerald-500 py-4 rounded-2xl font-black" download="Ulugbek_AI_App.html">📲 HTML ilovani yuklab olish</a>
 </div>
 </section>
 
@@ -98,25 +120,62 @@ locale: "uz"
 });
 }
 
-function handleGoogleResponse(response) {
-const payload = JSON.parse(atob(response.credential.split(".")[1]));
+async function handleGoogleResponse(response) {
+const result = await fetch("/api/login", {
+method: "POST",
+headers: {"Content-Type":"application/json"},
+body: JSON.stringify({credential: response.credential})
+});
+
+const data = await result.json();
+
+if(data.error) {
+alert(data.error);
+return;
+}
 
 document.getElementById("loginScreen").classList.add("hidden");
 document.getElementById("profile").classList.remove("hidden");
-document.getElementById("userPhoto").src = payload.picture;
-document.getElementById("userName").innerText = payload.name;
+document.getElementById("userPhoto").src = data.user.picture;
+document.getElementById("userName").innerText = data.user.name;
+document.getElementById("userEmail").innerText = data.user.email;
 
-addMessage("Ulug'bek AI", `Xush kelibsiz, ${payload.name}! Menga ovoz bilan yozing yoki savolingizni yozing.`);
-speak(`Xush kelibsiz, ${payload.name}`);
+addMessage("Ulug'bek AI", `Xush kelibsiz, ${data.user.name}. Men sizning professional AI agentingizman.`);
+speak(`Xush kelibsiz, ${data.user.name}`);
 }
 
-function addMessage(sender, text) {
+async function logout() {
+await fetch("/api/logout", {method:"POST"});
+location.reload();
+}
+
+function addMessage(sender, text, chatId) {
 const chat = document.getElementById("chat");
 const div = document.createElement("div");
-div.className = sender === "Siz" ? "bg-slate-900 p-3 rounded-xl text-right" : "bg-indigo-950/50 border border-indigo-500/30 p-3 rounded-xl";
-div.innerHTML = `<b>${sender}:</b> ${text}`;
+div.className = sender === "Siz" ? "bg-slate-900 p-4 rounded-2xl text-right" : "bg-indigo-950/50 border border-indigo-500/25 p-4 rounded-2xl";
+div.innerHTML = `<b>${sender}:</b><br>${text}`;
+
+if(chatId) {
+const actions = document.createElement("div");
+actions.className = "flex gap-2 mt-3";
+actions.innerHTML = `
+<button onclick="rate(${chatId}, 'good')" class="text-xs bg-emerald-600/20 text-emerald-300 px-3 py-1.5 rounded-xl">👍 Foydali</button>
+<button onclick="rate(${chatId}, 'bad')" class="text-xs bg-red-600/20 text-red-300 px-3 py-1.5 rounded-xl">👎 Yaxshilash kerak</button>
+`;
+div.appendChild(actions);
+}
+
 chat.appendChild(div);
 chat.scrollTop = chat.scrollHeight;
+}
+
+async function rate(chatId, rating) {
+await fetch("/api/rate", {
+method: "POST",
+headers: {"Content-Type":"application/json"},
+body: JSON.stringify({chat_id: chatId, rating})
+});
+addMessage("Ulug'bek AI", "Fikringiz saqlandi. Keyingi javoblarimni shunga qarab yaxshilayman.");
 }
 
 async function sendMessage(text) {
@@ -126,7 +185,7 @@ if(!message) return;
 
 addMessage("Siz", message);
 input.value = "";
-setStatus("O‘ylayapti...");
+setStatus("Tahlil qilmoqda...");
 
 try {
 const response = await fetch("/api/chat", {
@@ -138,7 +197,11 @@ const data = await response.json();
 
 if(data.error) throw new Error(data.error);
 
-addMessage("Ulug'bek AI", data.reply);
+if(data.provider) {
+document.getElementById("providerBadge").innerText = "AI: " + data.provider;
+}
+
+addMessage("Ulug'bek AI", data.reply, data.chat_id);
 speak(data.reply);
 } catch(error) {
 addMessage("Xatolik", error.message);
@@ -155,6 +218,8 @@ setStatus("Gapiryapti...");
 
 const speech = new SpeechSynthesisUtterance(text);
 speech.lang = "uz-UZ";
+speech.rate = 1;
+speech.pitch = 1;
 speech.onend = () => {
 avatar.classList.remove("speaking");
 setStatus("Tayyor");
@@ -171,7 +236,7 @@ function toggleListening() {
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 if(!SpeechRecognition) {
-alert("Brauzeringiz ovozni tanishni qo‘llab-quvvatlamaydi. Google Chrome’dan foydalaning.");
+alert("Ovozli boshqaruv uchun Google Chrome’dan foydalaning.");
 return;
 }
 
@@ -191,8 +256,7 @@ setStatus("Tinglayapti...");
 };
 
 recognition.onresult = event => {
-const text = event.results[0][0].transcript;
-handleVoiceCommand(text);
+handleVoiceCommand(event.results[0][0].transcript);
 };
 
 recognition.onend = () => {
@@ -209,7 +273,7 @@ const lower = text.toLowerCase();
 
 if(lower.includes("yangi chat")) {
 document.getElementById("chat").innerHTML = "";
-addMessage("Ulug'bek AI", "Yangi suhbat ochildi.");
+addMessage("Ulug'bek AI", "Yangi professional suhbat ochildi.");
 return;
 }
 
@@ -232,7 +296,7 @@ return;
 }
 
 status.classList.remove("hidden");
-status.innerText = "AI ilovani yaratmoqda...";
+status.innerText = "Professional mahsulot arxitekturasi tuzilmoqda...";
 
 try {
 const response = await fetch("/api/generate-app", {
@@ -247,8 +311,8 @@ if(data.error) throw new Error(data.error);
 document.getElementById("codeArea").classList.remove("hidden");
 document.getElementById("generatedCode").value = data.code;
 document.getElementById("downloadLink").href = URL.createObjectURL(new Blob([data.code], {type:"text/html"}));
-status.innerText = "✅ Ilova tayyor!";
-speak("Ilova tayyor bo‘ldi.");
+status.innerText = "✅ Professional ilova tayyor!";
+speak("Professional ilova tayyor bo‘ldi.");
 } catch(error) {
 status.innerText = "❌ " + error.message;
 }
