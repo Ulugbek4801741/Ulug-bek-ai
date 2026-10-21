@@ -1,210 +1,114 @@
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ulug'bek AI - Autonomous Enterprise Platform</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+import os
+import json
+import requests
+from flask import Flask, request, jsonify, send_from_directory
+from dotenv import load_dotenv
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
-        body { background: #050811; color: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .glass-panel { background: rgba(13, 19, 33, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .avatar-pulse { animation: pulse 1.8s infinite alternate; }
-        @keyframes pulse { 
-            0% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); transform: scale(1); } 
-            100% { box-shadow: 0 0 35px rgba(99, 102, 241, 0.8); transform: scale(1.05); } 
-        }
-        .speaking { animation: talk 0.3s infinite alternate; border-color: #10b981 !important; }
-        @keyframes talk { 0% { border-width: 2px; } 100% { border-width: 6px; } }
-        .terminal-scroll::-webkit-scrollbar { width: 4px; }
-        .terminal-scroll::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
-    </style>
-</head>
-<body class="min-h-screen p-3 md:p-6 pb-20">
+load_dotenv()
 
-    <!-- AUTHENTICATION MODAL -->
-    <div id="authModal" class="fixed inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center z-50 p-4">
-        <div class="glass-panel max-w-md w-full rounded-3xl p-6 space-y-5 border border-indigo-500/30 shadow-2xl">
-            <div class="text-center">
-                <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-indigo-400 to-purple-400">Ulug'bek AI</h2>
-                <p class="text-xs text-slate-400 mt-1">Xalqaro Avtonom Platforma va AI Ekosistemasi</p>
-            </div>
-            <button onclick="loginUser()" class="w-full bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-500 hover:to-emerald-500 text-white font-extrabold py-3.5 rounded-xl text-xs shadow-lg transition">
-                🚀 Platformaga Kirish
-            </button>
-        </div>
-    </div>
+app = Flask(__name__, static_folder=".", static_url_path="")
 
-    <!-- MAIN BRAND HEADER -->
-    <header class="glass-panel rounded-3xl p-5 mb-6 max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-center gap-4 border border-indigo-500/20">
-        <div>
-            <div class="flex items-center gap-3">
-                <span class="w-4 h-4 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_12px_#10b981]"></span>
-                <h1 class="text-2xl md:text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-indigo-400 to-purple-400">
-                    Ulug'bek AI
-                </h1>
-            </div>
-            <p class="text-xs text-slate-400 mt-1 font-medium">Universal Autonomous No-Code Engine & Multi-Agent Ecosystem</p>
-        </div>
-        <div class="bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-2xl text-xs text-slate-300 font-bold flex items-center gap-2">
-            <i class="fa-solid fa-shield-halved text-emerald-400"></i> Status: <span class="text-emerald-400">ONLINE (Protected Backend)</span>
-        </div>
-    </header>
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 
-    <!-- MAIN PLATFORM GRID -->
-    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <!-- CHAT AGENT -->
-        <section class="glass-panel rounded-3xl p-5 flex flex-col justify-between space-y-4">
-            <div>
-                <h2 class="text-base font-extrabold border-b border-slate-800 pb-3 flex items-center justify-between">
-                    <span><i class="fa-solid fa-robot text-emerald-400 mr-2"></i> Ulug'bek AI Chat Agent</span>
-                    <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-semibold">ONLINE</span>
-                </h2>
+@app.route("/")
+def home():
+    return send_from_directory(".", "index.html")
 
-                <div class="flex flex-col items-center justify-center my-4">
-                    <div id="avatarCircle" class="w-24 h-24 rounded-full border-4 border-indigo-500 flex items-center justify-center bg-slate-900 avatar-pulse relative overflow-hidden">
-                        <i id="avatarIcon" class="fa-solid fa-brain text-4xl text-emerald-400"></i>
-                    </div>
-                    <p class="text-xs text-slate-200 font-bold mt-2">Ulug'bek AI Agent</p>
-                </div>
 
-                <div id="chatBox" class="h-48 overflow-y-auto bg-slate-950/90 rounded-2xl p-3 space-y-2 border border-slate-800 text-xs terminal-scroll">
-                    <div class="bg-indigo-950/50 p-2.5 rounded-xl border border-indigo-500/30 text-slate-300">
-                        <span class="font-extrabold text-indigo-300">Ulug'bek AI:</span> Salom, Ulug'bek aka! Menga savol yuboring, backend orqali javob beraman.
-                    </div>
-                </div>
-            </div>
+@app.route("/api/config")
+def config():
+    return jsonify({"googleClientId": GOOGLE_CLIENT_ID or ""})
 
-            <div class="space-y-2 pt-2">
-                <div class="flex gap-2 items-center">
-                    <input type="text" id="userInput" placeholder="Xabar yozing..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
-                    <button onclick="sendChatMessage()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2.5 rounded-xl text-xs font-bold shadow-md transition">
-                        <i class="fa-solid fa-paper-plane"></i>
-                    </button>
-                </div>
-            </div>
-        </section>
 
-        <!-- NO-CODE APP ENGINE -->
-        <section class="glass-panel rounded-3xl p-5 lg:col-span-2 flex flex-col justify-between space-y-4">
-            <div>
-                <h2 class="text-base font-extrabold border-b border-slate-800 pb-3 flex items-center justify-between">
-                    <span><i class="fa-solid fa-wand-magic-sparkles text-indigo-400 mr-2"></i> Ulug'bek AI No-Code App Engine</span>
-                    <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-semibold">Auto-Build</span>
-                </h2>
+def ask_gemini(prompt, system_instruction):
+    if not GEMINI_API_KEY:
+        return None, "GEMINI_API_KEY sozlanmagan. Replit Secrets yoki .env fayliga qo‘shing."
 
-                <div class="mt-4 space-y-3">
-                    <label class="block text-xs font-semibold text-slate-300">Ilova yoki O'yin Prompt Tavsifi:</label>
-                    <textarea id="appPrompt" rows="4" class="w-full bg-slate-950/90 border border-slate-800 rounded-2xl p-3.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="Masalan: Bank xizmatlari va valyuta kursini hisoblovchi ilova yozib ber..."></textarea>
-                </div>
-            </div>
+    payload = {
+        "system_instruction": {
+            "parts": [{"text": system_instruction}]
+        },
+        "contents": [
+            {"role": "user", "parts": [{"text": prompt}]}
+        ],
+        "tools": [{"google_search": {}}]
+    }
 
-            <div class="space-y-3 pt-2">
-                <button onclick="startAppGeneration()" class="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-600 hover:from-indigo-500 hover:to-emerald-500 text-white font-extrabold py-4 rounded-2xl text-sm flex items-center justify-center gap-2 shadow-2xl transition">
-                    <i class="fa-solid fa-rocket"></i> 🚀 Avtonom Ilovani Yaratish (No-Code Submit)
-                </button>
+    response = requests.post(
+        f"{GEMINI_URL}?key={GEMINI_API_KEY}",
+        headers={"Content-Type": "application/json"},
+        data=json.dumps(payload),
+        timeout=60
+    )
 
-                <div id="buildMonitor" class="hidden bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 text-xs">
-                    <div class="flex justify-between items-center">
-                        <span id="buildStatus" class="font-bold text-indigo-400">🔍 AI Serveridan Javob Olinmoqda...</span>
-                        <span id="buildPercent" class="font-extrabold text-emerald-400">20%</span>
-                    </div>
+    if response.status_code != 200:
+        return None, f"Gemini xatosi: {response.status_code} - {response.text[:300]}"
 
-                    <div id="terminalOutput" class="h-32 overflow-y-auto bg-black p-3 rounded-xl font-mono text-[11px] text-emerald-400 border border-slate-900 terminal-scroll">
-                        <p class="text-slate-500">[SYSTEM]: Backend Proxy Server Initialized...</p>
-                    </div>
+    data = response.json()
 
-                    <div id="downloadArea" class="hidden pt-2 border-t border-slate-800 flex gap-2">
-                        <a id="downloadLink" href="#" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-lg">
-                            📲 Yaratilgan Ilovani (.html) Yuklab Olish
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
+    try:
+        text = data["candidates"][0]["content"]["parts"][0]["text"]
+        return text, None
+    except (KeyError, IndexError):
+        return None, "Gemini javob formati noto‘g‘ri keldi."
 
-    </main>
 
-    <script>
-        function loginUser() {
-            document.getElementById('authModal').classList.add('hidden');
-        }
+@app.route("/api/chat", methods=["POST"])
+def chat():
+    body = request.get_json(silent=True) or {}
+    prompt = (body.get("prompt") or "").strip()
 
-        // BACKEND AGENT.PY PROXY ORQALI HAVOZA YUBORISH
-        async function callBackendAPI(promptText) {
-            // BACKEND SERVER ENDPOINT (agent.py)
-            const response = await fetch('/generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: promptText })
-            });
+    if not prompt:
+        return jsonify({"error": "Savol bo‘sh bo‘lishi mumkin emas."}), 400
 
-            return await response.json();
-        }
+    system = (
+        "Sen Ulug'bek AI nomli yordamchisan. "
+        "Foydalanuvchiga o‘zbek tilida, aniq, foydali va qisqa javob ber. "
+        "Zamonaviy yoki aniq ma’lumot kerak bo‘lsa, Google Search vositasidan foydalanib, "
+        "internetdan tekshirilgan ma’lumot asosida javob ber."
+    )
 
-        async function sendChatMessage() {
-            const input = document.getElementById('userInput');
-            let text = input.value.trim();
-            const chatBox = document.getElementById('chatBox');
+    answer, error = ask_gemini(prompt, system)
 
-            if(!text) return;
+    if error:
+        return jsonify({"error": error}), 500
 
-            chatBox.innerHTML += `<div class="bg-slate-900 p-2.5 rounded-xl text-right"><span class="font-bold text-slate-300">Siz:</span> ${text}</div>`;
-            input.value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
+    return jsonify({"reply": answer})
 
-            try {
-                const data = await callBackendAPI(text);
-                if(data.candidates && data.candidates[0]) {
-                    const aiReply = data.candidates[0].content.parts[0].text;
-                    chatBox.innerHTML += `<div class="bg-indigo-950/50 p-2.5 rounded-xl border border-indigo-500/30 text-slate-200"><span class="font-extrabold text-indigo-300">Ulug'bek AI:</span> ${aiReply}</div>`;
-                } else {
-                    chatBox.innerHTML += `<div class="bg-red-950/60 p-2.5 rounded-xl text-red-300">❌ Server javob bera olmadi.</div>`;
-                }
-            } catch(err) {
-                chatBox.innerHTML += `<div class="bg-red-950/60 p-2.5 rounded-xl text-red-300">❌ Backend serverga ulanishda xatolik.</div>`;
-            }
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
 
-        async function startAppGeneration() {
-            const prompt = document.getElementById('appPrompt').value.trim();
-            const monitor = document.getElementById('buildMonitor');
-            const terminal = document.getElementById('terminalOutput');
-            const downloadArea = document.getElementById('downloadArea');
+@app.route("/api/generate-app", methods=["POST"])
+def generate_app():
+    body = request.get_json(silent=True) or {}
+    prompt = (body.get("prompt") or "").strip()
 
-            if(!prompt) { alert("Iltimos, ilova g'oyasini kiriting!"); return; }
+    if not prompt:
+        return jsonify({"error": "Ilova g‘oyasi bo‘sh bo‘lishi mumkin emas."}), 400
 
-            monitor.classList.remove('hidden');
-            downloadArea.classList.add('hidden');
-            document.getElementById('buildPercent').innerText = "40%";
-            terminal.innerHTML = `<p class="text-emerald-400">[SYSTEM]: Backend server orqali so'rov yuborilmoqda...</p>`;
+    system = (
+        "Sen tajribali frontend dasturchisan. "
+        "Foydalanuvchi bergan g‘oya asosida bitta to‘liq ishlaydigan HTML fayl yoz. "
+        "Faqat HTML kodini qaytar. Izoh, markdown yoki tushuntirish yozma. "
+        "HTML fayl mobil telefonda ham chiroyli ko‘rinsin, o‘zbek tilida bo‘lsin "
+        "va tashqi kutubxonalarni CDN orqali ishlatsin."
+    )
 
-            try {
-                const data = await callBackendAPI("O'zbek tilida ushbu ilova uchun to'liq HTML, CSS va JS kodi yozib ber: " + prompt);
+    code, error = ask_gemini(prompt, system)
 
-                if(data.candidates && data.candidates[0]) {
-                    const generatedCode = data.candidates[0].content.parts[0].text;
-                    document.getElementById('buildPercent').innerText = "100%";
-                    document.getElementById('buildStatus').innerText = "🎉 Muvaffaqiyatli Yaratildi!";
-                    terminal.innerText = generatedCode;
+    if error:
+        return jsonify({"error": error}), 500
 
-                    const blob = new Blob([generatedCode], { type: 'text/html' });
-                    document.getElementById('downloadLink').href = URL.createObjectURL(blob);
-                    document.getElementById('downloadLink').download = "Ulugbek_AI_App.html";
-                    downloadArea.classList.remove('hidden');
-                } else {
-                    throw new Error("Xatolik");
-                }
-            } catch(err) {
-                terminal.innerHTML += `<p class="text-red-400">[ERROR]: AI kodi generatsiya qilinmadi.</p>`;
-                document.getElementById('buildStatus').innerText = "❌ Xatolik!";
-            }
-        }
-    </script>
-</body>
-</html>
+    code = code.strip()
+
+    if code.startswith("```"):
+        code = code.split("\n", 1)[1] if "\n" in code else code
+        if code.endswith("```"):
+            code = code[:-3]
+
+    return jsonify({"code": code.strip()})
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=True)
