@@ -18,7 +18,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "A4801741_a")
 
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent"
 OPENAI_URL = "https://api.openai.com/v1/chat/completions"
 DB_PATH = "ulugbek_ai.db"
 
@@ -435,6 +435,10 @@ def admin_backup():
 
     path = create_backup()
     return jsonify({"ok": True, "backup": path})
+
+
+from telegram_bot import create_telegram_blueprint
+app.register_blueprint(create_telegram_blueprint(ask_ai))
 
 
 if __name__ == "__main__":
