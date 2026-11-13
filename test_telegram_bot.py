@@ -3,6 +3,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from flask import Flask
 import telegram_bot
 
 
@@ -12,8 +13,13 @@ class TelegramBotTests(unittest.TestCase):
         telegram_bot.DB_PATH = os.path.join(self.tempdir.name, "test.sqlite3")
         telegram_bot.BOT_TOKEN = "test-token"
         telegram_bot.WEBHOOK_SECRET = "test-webhook-secret"
-        telegram_bot.create_telegram_blueprint(lambda prompt, system: ("Javob", "test"))
-        self.client = telegram_bot.telegram_bp.test_client()
+        app = Flask(__name__)
+        app.register_blueprint(
+            telegram_bot.create_telegram_blueprint(
+                lambda prompt, system: ("Javob", "test")
+            )
+        )
+        self.client = app.test_client()
 
     def tearDown(self):
         self.tempdir.cleanup()
