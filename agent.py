@@ -437,5 +437,9 @@ def admin_backup():
     return jsonify({"ok": True, "backup": path})
 
 
+from telegram_bot import create_telegram_blueprint
+app.register_blueprint(create_telegram_blueprint(ask_ai))
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=True)
