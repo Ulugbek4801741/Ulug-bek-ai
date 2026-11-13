@@ -154,12 +154,13 @@ def telegram_webhook():
     if not BOT_TOKEN:
         return jsonify({"error": "Telegram bot sozlanmagan."}), 503
 
+    if not WEBHOOK_SECRET:
+        return jsonify({"error": "Telegram webhook secret sozlanmagan."}), 503
+
     supplied_secret = request.headers.get(
         "X-Telegram-Bot-Api-Secret-Token", ""
     )
-    if WEBHOOK_SECRET and not hmac.compare_digest(
-        supplied_secret, WEBHOOK_SECRET
-    ):
+    if not hmac.compare_digest(supplied_secret, WEBHOOK_SECRET):
         return jsonify({"error": "Unauthorized"}), 401
 
     update = request.get_json(silent=True) or {}
