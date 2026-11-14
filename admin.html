@@ -106,25 +106,53 @@ document.getElementById("backupStatus").innerText = data.backup ? "Zaxira yarati
 }
 
 async function loadData() {
-const knowledge = await (await fetch("/api/admin/knowledge")).json();
-const chats = await (await fetch("/api/admin/chats")).json();
+const [knowledgeResponse, chatsResponse] = await Promise.all([
+fetch("/api/admin/knowledge", {credentials:"same-origin"}),
+fetch("/api/admin/chats", {credentials:"same-origin"})
+]);
+if (!knowledgeResponse.ok || !chatsResponse.ok) {
+throw new Error("Administrator ma’lumotlarini yuklab bo‘lmadi.");
+}
+const knowledge = await knowledgeResponse.json();
+const chats = await chatsResponse.json();
+const knowledgeList = document.getElementById("knowledgeList");
+const chatList = document.getElementById("chatList");
+knowledgeList.replaceChildren();
+chatList.replaceChildren();
 
-document.getElementById("knowledgeList").innerHTML = knowledge.map(item => `
-<div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
-<b>${item.title}</b>
-<p class="text-slate-400 text-sm mt-1">${item.content}</p>
-<button onclick="deleteKnowledge(${item.id})" class="mt-3 text-xs bg-red-600/20 text-red-300 px-3 py-1.5 rounded-lg">O‘chirish</button>
-</div>
-`).join("");
+for (const item of knowledge) {
+const card = document.createElement("div");
+card.className = "bg-slate-950 p-4 rounded-2xl border border-slate-800";
+const title = document.createElement("b");
+title.textContent = item.title || "";
+const content = document.createElement("p");
+content.className = "text-slate-400 text-sm mt-1";
+content.textContent = item.content || "";
+const button = document.createElement("button");
+button.className = "mt-3 text-xs bg-red-600/20 text-red-300 px-3 py-1.5 rounded-lg";
+button.textContent = "O‘chirish";
+button.addEventListener("click", () => deleteKnowledge(item.id));
+card.append(title, content, button);
+knowledgeList.append(card);
+}
 
-document.getElementById("chatList").innerHTML = chats.map(item => `
-<div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
-<b>Savol:</b> ${item.question}<br>
-<b>Javob:</b> ${item.answer}<br>
-<b>AI:</b> ${item.provider || "aniqlanmagan"}<br>
-<b>Baho:</b> ${item.rating || "baholanmagan"}
-</div>
-`).join("");
+for (const item of chats) {
+const card = document.createElement("div");
+card.className = "bg-slate-950 p-4 rounded-2xl border border-slate-800";
+for (const [label, value] of [
+["Savol: ", item.question],
+["Javob: ", item.answer],
+["AI: ", item.provider || "aniqlanmagan"],
+["Baho: ", item.rating || "baholanmagan"]
+]) {
+const line = document.createElement("p");
+const strong = document.createElement("b");
+strong.textContent = label;
+line.append(strong, document.createTextNode(String(value || "")));
+card.append(line);
+}
+chatList.append(card);
+}
 }
 </script>
 </body>
