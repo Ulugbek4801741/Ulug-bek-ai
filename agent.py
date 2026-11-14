@@ -18,7 +18,8 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "A4801741_a")
 
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent"
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest").strip() or "gemini-flash-latest"
+GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 OPENAI_URL = "https://api.openai.com/v1/chat/completions"
 DB_PATH = "ulugbek_ai.db"
 
@@ -144,26 +145,41 @@ def build_system_prompt(base_prompt):
 
 
 def ask_gemini(prompt, system_prompt, api_key):
+    """Call Gemini without putting the credential in the request URL."""
+    if not api_key:
+        return None
     payload = {
         "system_instruction": {"parts": [{"text": system_prompt}]},
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
-        "tools": [{"google_search": {}}]
+        "generationConfig": {"temperature": 0.4},
     }
-
-    response = requests.post(
-        f"{GEMINI_URL}?key={api_key}",
-        headers={"Content-Type": "application/json"},
-        data=json.dumps(payload),
-        timeout=60
-    )
-
-    if response.status_code != 200:
-        return None
-
     try:
-        return response.json()["candidates"][0]["content"]["parts"][0]["text"]
-    except (KeyError, IndexError):
+        response = requests.post(
+            GEMINI_URL,
+            headers={
+                "Content-Type": "application/json",
+                "X-goog-api-key": api_key.strip(),
+            },
+            json=payload,
+            timeout=(10, 60),
+        )
+        if response.status_code != 200:
+            app.logger.warning("Gemini API returned HTTP %s", response.status_code)
+            return None
+        data = response.json()
+    except (requests.RequestException, ValueError) as exc:
+        app.logger.warning("Gemini request failed: %s", type(exc).__name__)
         return None
+
+    candidates = data.get("candidates") or []
+    if not candidates:
+        app.logger.warning("Gemini response did not contain candidates")
+        return None
+    parts = (candidates[0].get("content") or {}).get("parts") or []
+    answer = "\\n".join(
+        part.get("text", "") for part in parts if isinstance(part, dict)
+    ).strip()
+    return answer or None
 
 
 def ask_openai(prompt, system_prompt):
