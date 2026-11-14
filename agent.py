@@ -223,13 +223,32 @@ def login():
     if not token:
         return jsonify({"error": "Google tokeni yo‘q."}), 400
 
+    if not GOOGLE_CLIENT_ID:
+        return jsonify({"error": "Google Client ID serverda sozlanmagan."}), 503
+
     try:
-        import base64
-        payload_part = token.split(".")[1]
-        payload_part += "=" * (-len(payload_part) % 4)
-        payload = json.loads(base64.urlsafe_b64decode(payload_part))
-    except Exception:
-        return jsonify({"error": "Google tokeni noto‘g‘ri."}), 400
+        verification = requests.get(
+            "https://oauth2.googleapis.com/tokeninfo",
+            params={"id_token": token},
+            timeout=10,
+        )
+        if verification.status_code != 200:
+            return jsonify({"error": "Google tokeni haqiqiy emas yoki muddati tugagan."}), 401
+        payload = verification.json()
+    except requests.RequestException:
+        return jsonify({"error": "Google tokenini tekshirish xizmati vaqtincha ishlamayapti."}), 503
+    except ValueError:
+        return jsonify({"error": "Google token javobi noto‘g‘ri."}), 502
+
+    issuer = payload.get("iss")
+    if issuer not in ("accounts.google.com", "https://accounts.google.com"):
+        return jsonify({"error": "Google token emitenti noto‘g‘ri."}), 401
+    if payload.get("aud") != GOOGLE_CLIENT_ID:
+        return jsonify({"error": "Google token boshqa ilova uchun chiqarilgan."}), 401
+    if payload.get("email_verified") not in (True, "true"):
+        return jsonify({"error": "Google email manzili tasdiqlanmagan."}), 401
+    if not payload.get("sub"):
+        return jsonify({"error": "Google foydalanuvchi identifikatori topilmadi."}), 401
 
     connection = db()
     connection.execute(
