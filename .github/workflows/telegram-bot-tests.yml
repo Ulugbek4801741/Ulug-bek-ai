@@ -1,10 +1,10 @@
-name: Telegram bot tests
+name: Application and Telegram tests
 
 on:
   pull_request:
     branches: [main]
   push:
-    branches: [feat/telegram-sales-bot-foundation]
+    branches: [feat/telegram-sales-bot-foundation, 'audit/**']
 
 jobs:
   telegram-tests:
@@ -16,5 +16,5 @@ jobs:
           python-version: "3.12"
       - name: Install dependencies
         run: pip install -r requirements.txt
-      - name: Run Telegram bot tests
+      - name: Run all Python unit tests
         run: python -m unittest discover -v
