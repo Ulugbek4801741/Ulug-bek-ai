@@ -18,7 +18,7 @@ class GeminiRequestTests(unittest.TestCase):
 
         answer = agent.ask_gemini("Salom", "O‘zbekcha javob ber", "TEST_ONLY_SECRET")
 
-        self.assertEqual(answer, "Salom\\ndunyo")
+        self.assertEqual(answer, "Salom\ndunyo")
         args, kwargs = post.call_args
         self.assertNotIn("TEST_ONLY_SECRET", args[0])
         self.assertNotIn("?", args[0])
