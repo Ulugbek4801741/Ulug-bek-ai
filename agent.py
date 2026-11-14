@@ -18,7 +18,8 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "A4801741_a")
 
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest").strip() or "gemini-flash-latest"
+GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 OPENAI_URL = "https://api.openai.com/v1/chat/completions"
 DB_PATH = "ulugbek_ai.db"
 
@@ -144,26 +145,41 @@ def build_system_prompt(base_prompt):
 
 
 def ask_gemini(prompt, system_prompt, api_key):
+    """Call Gemini without putting the credential in the request URL."""
+    if not api_key:
+        return None
     payload = {
         "system_instruction": {"parts": [{"text": system_prompt}]},
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
-        "tools": [{"google_search": {}}]
+        "generationConfig": {"temperature": 0.4},
     }
-
-    response = requests.post(
-        f"{GEMINI_URL}?key={api_key}",
-        headers={"Content-Type": "application/json"},
-        data=json.dumps(payload),
-        timeout=60
-    )
-
-    if response.status_code != 200:
-        return None
-
     try:
-        return response.json()["candidates"][0]["content"]["parts"][0]["text"]
-    except (KeyError, IndexError):
+        response = requests.post(
+            GEMINI_URL,
+            headers={
+                "Content-Type": "application/json",
+                "X-goog-api-key": api_key.strip(),
+            },
+            json=payload,
+            timeout=(10, 60),
+        )
+        if response.status_code != 200:
+            app.logger.warning("Gemini API returned HTTP %s", response.status_code)
+            return None
+        data = response.json()
+    except (requests.RequestException, ValueError) as exc:
+        app.logger.warning("Gemini request failed: %s", type(exc).__name__)
         return None
+
+    candidates = data.get("candidates") or []
+    if not candidates:
+        app.logger.warning("Gemini response did not contain candidates")
+        return None
+    parts = (candidates[0].get("content") or {}).get("parts") or []
+    answer = "\n".join(
+        part.get("text", "") for part in parts if isinstance(part, dict)
+    ).strip()
+    return answer or None
 
 
 def ask_openai(prompt, system_prompt):
@@ -223,13 +239,32 @@ def login():
     if not token:
         return jsonify({"error": "Google tokeni yo‘q."}), 400
 
+    if not GOOGLE_CLIENT_ID:
+        return jsonify({"error": "Google Client ID serverda sozlanmagan."}), 503
+
     try:
-        import base64
-        payload_part = token.split(".")[1]
-        payload_part += "=" * (-len(payload_part) % 4)
-        payload = json.loads(base64.urlsafe_b64decode(payload_part))
-    except Exception:
-        return jsonify({"error": "Google tokeni noto‘g‘ri."}), 400
+        verification = requests.get(
+            "https://oauth2.googleapis.com/tokeninfo",
+            params={"id_token": token},
+            timeout=10,
+        )
+        if verification.status_code != 200:
+            return jsonify({"error": "Google tokeni haqiqiy emas yoki muddati tugagan."}), 401
+        payload = verification.json()
+    except requests.RequestException:
+        return jsonify({"error": "Google tokenini tekshirish xizmati vaqtincha ishlamayapti."}), 503
+    except ValueError:
+        return jsonify({"error": "Google token javobi noto‘g‘ri."}), 502
+
+    issuer = payload.get("iss")
+    if issuer not in ("accounts.google.com", "https://accounts.google.com"):
+        return jsonify({"error": "Google token emitenti noto‘g‘ri."}), 401
+    if payload.get("aud") != GOOGLE_CLIENT_ID:
+        return jsonify({"error": "Google token boshqa ilova uchun chiqarilgan."}), 401
+    if payload.get("email_verified") not in (True, "true"):
+        return jsonify({"error": "Google email manzili tasdiqlanmagan."}), 401
+    if not payload.get("sub"):
+        return jsonify({"error": "Google foydalanuvchi identifikatori topilmadi."}), 401
 
     connection = db()
     connection.execute(
@@ -435,6 +470,10 @@ def admin_backup():
 
     path = create_backup()
     return jsonify({"ok": True, "backup": path})
+
+
+from telegram_bot import create_telegram_blueprint
+app.register_blueprint(create_telegram_blueprint(ask_ai))
 
 
 if __name__ == "__main__":
