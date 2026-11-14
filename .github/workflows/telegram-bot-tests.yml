@@ -17,4 +17,4 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Run Telegram bot tests
-        run: python -m unittest -v test_telegram_bot.py
+        run: python -m unittest discover -v
