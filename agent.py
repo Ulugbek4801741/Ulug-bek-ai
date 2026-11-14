@@ -176,7 +176,7 @@ def ask_gemini(prompt, system_prompt, api_key):
         app.logger.warning("Gemini response did not contain candidates")
         return None
     parts = (candidates[0].get("content") or {}).get("parts") or []
-    answer = "\\n".join(
+    answer = "\n".join(
         part.get("text", "") for part in parts if isinstance(part, dict)
     ).strip()
     return answer or None
